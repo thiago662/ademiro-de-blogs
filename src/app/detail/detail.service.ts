@@ -26,4 +26,12 @@ export class DetailService {
       }),
     }).toPromise();
   }
+
+  deletePost(id: any) {
+    return this.http.delete(environment.urlApi + '/teste-projects/' + id + '.json', {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    }).toPromise();
+  }
 }

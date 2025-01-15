@@ -30,7 +30,7 @@ export class DetailComponent {
   config: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
-    height: '15rem',
+    height: '25rem',
     minHeight: '5rem',
     placeholder: 'Enter text here...',
     translate: 'no',
@@ -100,6 +100,17 @@ export class DetailComponent {
     this.detailService.savePost(id, post)
       .then((data: any) => {
         this.ngOnInit();
+      })
+      .catch((error: any) => {
+        console.log(error);
+      })
+      .finally(() => {});
+  }
+
+  deletePost(id: any): void {
+    this.detailService.deletePost(id)
+      .then((data: any) => {
+        this.router.navigate(['/']);
       })
       .catch((error: any) => {
         console.log(error);

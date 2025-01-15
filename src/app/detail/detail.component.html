@@ -34,7 +34,12 @@
         <input type="text" class="form-control" id="updated_at" formControlName="updated_at" placeholder="Subtitulo">
     </div>
 
-    <angular-editor formControlName="html" [config]="config"></angular-editor>
-    
-    <button type="submit" class="btn btn-success" [disabled]="!postForm.valid">Salvar</button>
+    <div class="col-md-12 mb-3">
+        <angular-editor formControlName="html" [config]="config"></angular-editor>
+    </div>
+
+    <div class="col-md-12 mb-3">
+        <button type="submit" class="btn btn-success" [disabled]="!postForm.valid">Salvar</button>
+    </div>
 </form>
+<button class="btn btn-danger" (click)="deletePost(id)">Excluir</button>
