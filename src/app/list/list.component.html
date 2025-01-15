@@ -1,0 +1,52 @@
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">criar novo</button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form [formGroup]="postForm" (ngSubmit)="onSubmitToCreate()">
+                <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titulo</label>
+                            <input type="text" class="form-control" id="title" formControlName="title" placeholder="Titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="created_by" class="form-label">Criado por</label>
+                            <input type="text" class="form-control" id="created_by" formControlName="created_by" placeholder="Fulano Ciclano" required>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" [disabled]="!postForm.valid">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+@for (list of lists; track $index) {
+    <div class="card" style="width: 18rem;">
+        <div class="card-body text-center">
+            <h5 class="card-title">{{ list?.title }}</h5>
+            <p class="card-subtitle">{{ list?.subtitle }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                    <a class="btn btn-primary" [routerLink]="['/' + list?.id]">Editar</a>
+                    @if (list?.active) {
+                        <a class="btn btn-primary" href="{{ urlBlog + '/'  + list?.id }}" target="_blank" rel="noopener noreferrer">Ver</a>
+                    }
+                </div>
+                <small class="text-body-secondary">{{ getDateDiff(list) }} dias</small>
+            </div>
+        </div>
+    </div>
+    <!-- {{ list | json }} -->
+}
+@empty {
+    <p>Nada</p>
+}
+</div>

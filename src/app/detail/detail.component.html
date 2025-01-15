@@ -1,0 +1,40 @@
+<form class="row" [formGroup]="postForm" (ngSubmit)="onSubmitToUpdate()">
+    <a class="" href="{{ urlBlog + '/'  + id }}" target="_blank" rel="noopener noreferrer">{{ urlBlog + '/' + id }}</a>
+
+    <div class="col-md-12 mb-3">
+        <label for="title" class="form-label">Titulo</label>
+        <input type="text" class="form-control" id="title" formControlName="title" placeholder="Titulo" required>
+    </div>
+
+    <div class="col-md-12 mb-3">
+        <label for="subtitle" class="form-label">Subtitulo</label>
+        <input type="text" class="form-control" id="subtitle" formControlName="subtitle" placeholder="Subtitulo" required>
+    </div>
+
+    <div class="col-md-5 mb-3">
+        <label for="created_by" class="form-label">Criado por</label>
+        <input type="text" class="form-control" id="created_by" formControlName="created_by" placeholder="Fulano Ciclano" required>
+    </div>
+
+    <div class="col-md-1 mb-3">
+        <label for="active" class="form-label">Visualização</label>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="active" formControlName="active">
+            <label class="form-check-label" for="active">{{ postForm?.value?.active ? 'Ativa' : 'Inativa' }}</label>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <label for="created_at" class="form-label">Data de criação</label>
+        <input type="text" class="form-control" id="created_at" formControlName="created_at" placeholder="Subtitulo">
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <label for="updated_at" class="form-label">Data de atualização</label>
+        <input type="text" class="form-control" id="updated_at" formControlName="updated_at" placeholder="Subtitulo">
+    </div>
+
+    <angular-editor formControlName="html" [config]="config"></angular-editor>
+    
+    <button type="submit" class="btn btn-success" [disabled]="!postForm.valid">Salvar</button>
+</form>
