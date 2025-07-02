@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DetailService } from './detail.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -15,12 +15,15 @@ export class DetailComponent {
   urlBlog = environment.urlBlog;
   post: any;
   htmlContent = '';
+  topics = '';
   postForm = new FormGroup({
     id: new FormControl(''),
     title: new FormControl(''),
     subtitle: new FormControl(''),
     active: new FormControl(''),
     created_by: new FormControl(''),
+    category: new FormControl(''),
+    topics: new FormControl(''),
     html: new FormControl(''),
     created_at: new FormControl(''),
     updated_at: new FormControl(''),
@@ -30,6 +33,14 @@ export class DetailComponent {
   config: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
+
+    // enableToolbar: true,
+    // showToolbar: true,
+    // uploadWithCredentials: true,
+    sanitize: false,
+    // outline: true,
+    // rawPaste: true,
+
     height: '25rem',
     minHeight: '5rem',
     placeholder: 'Enter text here...',
@@ -53,6 +64,11 @@ export class DetailComponent {
         class: "titleText",
         tag: "h1",
       },
+      {
+        name: "teste",
+        class: "text-center",
+        tag: "p",
+      },
     ]
   };
 
@@ -60,6 +76,7 @@ export class DetailComponent {
     private router: Router,
     private route: ActivatedRoute,
     private detailService: DetailService,
+    private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit(): void {
@@ -77,6 +94,8 @@ export class DetailComponent {
           subtitle: data?.subtitle,
           active: data?.active,
           created_by: data?.created_by,
+          category: data?.category,
+          topics: data?.topics,
           html: data?.html,
           created_at: data?.created_at,
           updated_at: data?.updated_at,
@@ -116,5 +135,31 @@ export class DetailComponent {
         console.log(error);
       })
       .finally(() => {});
+  }
+
+  addTopic(topic: any) {
+    this.postForm.value.topics = this.postForm.value.topics == '' ? topic.toLowerCase() : this.postForm.value.topics + ',' + topic.toLowerCase();
+
+    var array = this.postForm.value.topics?.split(',') ?? [];
+
+    array = array.filter(function(value, index){ return array.indexOf(value) == index });
+
+    this.postForm.value.topics = array.toString();
+
+    this.topics = '';
+  }
+
+  subtrairTopic(topic: any) {
+    var array = this.postForm.value.topics?.split(',') ?? [];
+
+    array = array.filter(function(value, index){ return array.indexOf(value) == index });
+
+    array = array.filter(item => item != topic.toLowerCase());
+
+    this.postForm.value.topics = array.toString();
+  }
+
+  splitTopic(topics: any) {
+    return topics.split(',');
   }
 }

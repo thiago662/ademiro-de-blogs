@@ -1,5 +1,7 @@
 <form class="row" [formGroup]="postForm" (ngSubmit)="onSubmitToUpdate()">
-    <a class="" href="{{ urlBlog + '/'  + id }}" target="_blank" rel="noopener noreferrer">{{ urlBlog + '/' + id }}</a>
+    <p class="mt-3">
+        <a class="link-opacity-50-hover" href="{{ urlBlog + '/'  + id }}" target="_blank" rel="noopener noreferrer">{{ urlBlog + '/' + id }}</a>
+    </p>
 
     <div class="col-md-12 mb-3">
         <label for="title" class="form-label">Titulo</label>
@@ -34,12 +36,33 @@
         <input type="text" class="form-control" id="updated_at" formControlName="updated_at" placeholder="Subtitulo">
     </div>
 
+    <div class="col-md-6 mb-3">
+        <label for="category" class="form-label">Categoria</label>
+        <input type="text" class="form-control" id="category" formControlName="category" placeholder="Categoria" required>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label for="topics" class="form-label">Tópicos</label>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="topics" [(ngModel)]="topics" [ngModelOptions]="{standalone: true}" placeholder="php" aria-describedby="button-topics">
+            <button class="btn btn-outline-secondary" type="button" id="button-topics" (click)="addTopic(topics)">&plus;</button>
+        </div>
+        @for (topic of splitTopic(postForm?.value?.topics); track $index) {
+            <span class="badge text-bg-primary">
+                {{ topic }}
+                <span (click)="subtrairTopic(topic)" aria-hidden="true">&times;</span>
+            </span>
+        } @empty {
+
+        }
+    </div>
+
     <div class="col-md-12 mb-3">
         <angular-editor formControlName="html" [config]="config"></angular-editor>
     </div>
 
     <div class="col-md-12 mb-3">
-        <button type="submit" class="btn btn-success" [disabled]="!postForm.valid">Salvar</button>
+        <button type="submit" class="btn btn-success" [disabled]="!postForm?.valid">Salvar</button>
+        <button class="btn btn-danger" type="button" (click)="deletePost(id)">Excluir</button>
     </div>
 </form>
-<button class="btn btn-danger" (click)="deletePost(id)">Excluir</button>

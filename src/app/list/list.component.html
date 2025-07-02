@@ -1,4 +1,6 @@
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">criar post</button>
+<div class="m-2">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">criar post</button>
+</div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -29,7 +31,7 @@
 
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 @for (list of lists; track $index) {
-    <div class="card" style="width: 18rem;">
+    <div class="card m-3" style="width: 18rem;">
         <div class="card-body text-center">
             <h5 class="card-title">{{ list?.title }}</h5>
             <p class="card-subtitle">{{ list?.subtitle }}</p>
@@ -44,7 +46,6 @@
             </div>
         </div>
     </div>
-    <!-- {{ list | json }} -->
 }
 @empty {
     <p>Nada</p>
