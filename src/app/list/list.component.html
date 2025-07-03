@@ -39,7 +39,7 @@
                 <div class="btn-group">
                     <a class="btn btn-primary" [routerLink]="['/' + list?.id]">Editar</a>
                     @if (list?.active) {
-                        <a class="btn btn-primary" href="{{ urlBlog + '/'  + list?.id }}" target="_blank" rel="noopener noreferrer">Ver</a>
+                        <a class="btn btn-primary" href="{{ urlBlog + '/'  + list?.id }}" target="_blank" rel="noopener noreferrer">Abrir</a>
                     }
                 </div>
                 <small class="text-body-secondary">{{ getDateDiff(list) }} dias</small>

@@ -1,27 +1,64 @@
-# AdemiroDeBlogs
+# 📌 Ademiro de blogs
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
+O **Ademiro de blogs** é um pequeno projeto criado no intuido de poder gerenciar diversos blogs/materias de maneria facil e rapida em um mesmo ambiente com poucas configurações.
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## � Funcionalidades
 
-## Code scaffolding
+- **Funcionalidade 1**: Criar novas postagens.
+- **Funcionalidade 2**: Editar postagens já feitas.
+- **Funcionalidade 3**: Ocultar e ativer visualização postagens.
+- **Funcionalidade 4**: Excluir postagens.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+---
 
-## Build
+## 🛠️ Tecnologias Utilizadas
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
+- **Framework**: [Angular](https://angular.dev/)
+- **Banco de Dados**: [Firebase](https://firebase.google.com/)
+- **Ferramentas**: [Git](https://git-scm.com/)
 
-## Running unit tests
+---
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## ⚙️ Instalação
 
-## Running end-to-end tests
+1. **Clone o repositório**:
+   ```bash
+   git clone https://github.com/thiago662/ademiro-de-blogs.git
+   cd ademiro-de-blogs
+   ```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+2. **Instale as dependências**:
+   ```bash
+   npm install  # Para JavaScript/Node.js
+   ```
 
-## Further help
+3. **Configure o ambiente**:
+   - Crie um arquivo `.env` baseado no `.env.example` e preencha as variáveis.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+4. **Execute o projeto**:
+   ```bash
+   ng serve  # Frontend Angular
+   ```
+
+---
+
+## ✉️ Contato
+
+**Thiago Gonçalves Santos** - [@thiago662](https://github.com/thiago662) - thiago1santos12@gmail.com
+
+🔗 **Link do Projeto**: [https://github.com/thiago662/ademiro-de-blogs](https://github.com/thiago662/ademiro-de-blogs)
+
+---
+
+### 📌 Notas Adicionais
+
+- Se trata de um projeto pequeno e particular.
+- Seu principal intuido é para estudos e pratica de programação.
+
+Exemplo de badge:
+![GitHub last commit](https://img.shields.io/github/last-commit/thiago662/ademiro-de-blogs)
+
+---
