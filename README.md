@@ -1,29 +1,48 @@
 # 📌 Ademiro de blogs
 
-O **Ademiro de blogs** é um pequeno projeto criado no intuido de poder gerenciar diversos blogs/materias de maneria facil e rapida em um mesmo ambiente com poucas configurações.
+**PT**:
+O **Ademiro de blogs** é um pequeno projeto criado no intuído de poder gerenciar diversos blogs/matérias de maneira fácil e rápida em um mesmo ambiente com poucas configurações.
+
+**EN**:
+**Ademiro de blogs** is a small project created with the aim of being able to manage several blogs/articles easily and quickly in the same environment with few configurations.
 
 ---
 
-## � Funcionalidades
+## 🌟 Funcionalidades / Features
 
-- **Funcionalidade 1**: Criar novas postagens.
-- **Funcionalidade 2**: Editar postagens já feitas.
-- **Funcionalidade 3**: Ocultar e ativer visualização postagens.
-- **Funcionalidade 4**: Excluir postagens.
+**PT**:
+- **Criar novas postagens**
+- **Editar postagens já feitas**
+- **Ocultar e ativer visualização postagens**
+- **Excluir postagens**
+
+**EN**:
+- **Create new posts**
+- **Edit existing posts**
+- **Hide and enable post preview**
+- **Delete posts**
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas / Technologies
 
+**PT**:
 - **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
 - **Framework**: [Angular](https://angular.dev/)
 - **Banco de Dados**: [Firebase](https://firebase.google.com/)
 - **Ferramentas**: [Git](https://git-scm.com/)
 
+**EN**:
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Framework**: [Angular](https://angular.dev/)
+- **Database**: [Firebase](https://firebase.google.com/)
+- **Tools**: [Git](https://git-scm.com/)
+
 ---
 
-## ⚙️ Instalação
+## ⚙️ Instalação / Installation
 
+**PT**:
 1. **Clone o repositório**:
    ```bash
    git clone https://github.com/thiago662/ademiro-de-blogs.git
@@ -32,33 +51,63 @@ O **Ademiro de blogs** é um pequeno projeto criado no intuido de poder gerencia
 
 2. **Instale as dependências**:
    ```bash
-   npm install  # Para JavaScript/Node.js
+   npm install
    ```
 
 3. **Configure o ambiente**:
-   - Crie um arquivo `.env` baseado no `.env.example` e preencha as variáveis.
+   - Modifique o arquivo `environment.ts` alterando as propriedades `urlApi` pela url da seu banco no firebase e `urlBlog` com a url base do seu blog/site.
 
 4. **Execute o projeto**:
    ```bash
    ng serve  # Frontend Angular
    ```
 
+**EN**:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/thiago662/ademiro-de-blogs.git
+   cd ademiro-de-blogs
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure the environment**:
+   - Modifique o arquivo `environment.ts` alterando as propriedades `urlApi` pela url da seu banco no firebase e `urlBlog` com a url base do seu blog/site.
+
+4. **Run the project**:
+   ```bash
+   ng serve  # Frontend Angular
+   ```
+
 ---
 
-## ✉️ Contato
+## ✉️ Contato / Contact
 
+**PT**:
 **Thiago Gonçalves Santos** - [@thiago662](https://github.com/thiago662) - thiago1santos12@gmail.com
 
 🔗 **Link do Projeto**: [https://github.com/thiago662/ademiro-de-blogs](https://github.com/thiago662/ademiro-de-blogs)
 
+**EN**:
+**Thiago Gonçalves Santos** - [@thiago662](https://github.com/thiago662) - thiago1santos12@gmail.com
+
+🔗 **Project Link**: [https://github.com/thiago662/ademiro-de-blogs](https://github.com/thiago662/ademiro-de-blogs)
+
 ---
 
-### 📌 Notas Adicionais
+### 📌 Notas Adicionais / Additional Notes
 
+**PT**:
 - Se trata de um projeto pequeno e particular.
 - Seu principal intuido é para estudos e pratica de programação.
 
-Exemplo de badge:
+**EN**:
+- This is a small and private project.
+- Its main purpose is for studying and practicing programming.
+
 ![GitHub last commit](https://img.shields.io/github/last-commit/thiago662/ademiro-de-blogs)
 
 ---
