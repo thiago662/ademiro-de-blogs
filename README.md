@@ -75,7 +75,7 @@ O **Ademiro de blogs** é um pequeno projeto criado no intuído de poder gerenci
    ```
 
 3. **Configure the environment**:
-   - Modifique o arquivo `environment.ts` alterando as propriedades `urlApi` pela url da seu banco no firebase e `urlBlog` com a url base do seu blog/site.
+   - Modify the `environment.ts` file by changing the `urlApi` properties to the URL of your Firebase database and `urlBlog` to the base URL of your blog/site.
 
 4. **Run the project**:
    ```bash
@@ -86,14 +86,12 @@ O **Ademiro de blogs** é um pequeno projeto criado no intuído de poder gerenci
 
 ## ✉️ Contato / Contact
 
-**PT**:
 **Thiago Gonçalves Santos** - [@thiago662](https://github.com/thiago662) - thiago1santos12@gmail.com
 
+**PT**:
 🔗 **Link do Projeto**: [https://github.com/thiago662/ademiro-de-blogs](https://github.com/thiago662/ademiro-de-blogs)
 
 **EN**:
-**Thiago Gonçalves Santos** - [@thiago662](https://github.com/thiago662) - thiago1santos12@gmail.com
-
 🔗 **Project Link**: [https://github.com/thiago662/ademiro-de-blogs](https://github.com/thiago662/ademiro-de-blogs)
 
 ---
