@@ -24,6 +24,7 @@ export class DetailComponent {
     created_by: new FormControl(''),
     category: new FormControl(''),
     topics: new FormControl(''),
+    thumbnail: new FormControl(''),
     html: new FormControl(''),
     created_at: new FormControl(''),
     updated_at: new FormControl(''),
@@ -96,6 +97,7 @@ export class DetailComponent {
           created_by: data?.created_by,
           category: data?.category,
           topics: data?.topics,
+          thumbnail: data?.thumbnail,
           html: data?.html,
           created_at: data?.created_at,
           updated_at: data?.updated_at,
@@ -160,6 +162,10 @@ export class DetailComponent {
   }
 
   splitTopic(topics: any) {
-    return topics.split(',');
+    if (topics == undefined || topics == '') {
+      return null;
+    } else {
+      return topics.split(',');
+    }
   }
 }

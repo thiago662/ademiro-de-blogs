@@ -38,7 +38,7 @@
 
     <div class="col-md-6 mb-3">
         <label for="category" class="form-label">Categoria</label>
-        <input type="text" class="form-control" id="category" formControlName="category" placeholder="Categoria" required>
+        <input type="text" class="form-control" id="category" formControlName="category" placeholder="Categoria">
     </div>
 
     <div class="col-md-6 mb-3">
@@ -55,6 +55,15 @@
         } @empty {
 
         }
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label for="thumbnail" class="form-label">thumbnail</label>
+        <input type="text" class="form-control" id="thumbnail" formControlName="thumbnail" placeholder="thumbnail">
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <img src="{{ postForm?.value?.thumbnail }}" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="{{ postForm?.value?.thumbnail }}">
     </div>
 
     <div class="col-md-12 mb-3">

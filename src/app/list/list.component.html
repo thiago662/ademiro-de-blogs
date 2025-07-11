@@ -1,12 +1,12 @@
 <div class="m-2">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">criar post</button>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Criar post</button>
 </div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Criar post</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form [formGroup]="postForm" (ngSubmit)="onSubmitToCreate()">
@@ -31,11 +31,17 @@
 
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 @for (list of lists; track $index) {
-    <div class="card m-3" style="width: 18rem;">
-        <div class="card-body text-center">
-            <h5 class="card-title">{{ list?.title }}</h5>
-            <p class="card-subtitle">{{ list?.subtitle }}</p>
-            <div class="d-flex justify-content-between align-items-center">
+    <div class="card m-3 p-0" style="width: 18rem;">
+        @if (list?.thumbnail != null) {
+            <img src="{{ list?.thumbnail }}" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="...">
+        } @else {
+            <div class="bg-primary card-img-top" style="object-fit: cover; height: 200px;"></div>
+        }
+        <div class="card-body">
+            <h5 class="card-title text-truncate">{{ list?.title }}</h5>
+            <p class="card-subtitle text-truncate">{{ list?.subtitle }}</p>
+        </div>
+        <div class="card-footer p-3 bg-transparent border-0 text-muted d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                     <a class="btn btn-primary" [routerLink]="['/' + list?.id]">Editar</a>
                     @if (list?.active) {
@@ -43,7 +49,6 @@
                     }
                 </div>
                 <small class="text-body-secondary">{{ getDateDiff(list) }} dias</small>
-            </div>
         </div>
     </div>
 }

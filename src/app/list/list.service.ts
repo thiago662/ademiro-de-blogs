@@ -12,7 +12,7 @@ export class ListService {
   ) { }
 
   getPosts() {
-    return this.http.get(environment.urlApi + '/teste-projects.json', {
+    return this.http.get(environment.urlApi + '/' + environment.nameBlog + '.json', {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
@@ -20,7 +20,7 @@ export class ListService {
   }
 
   createPost(post: any) {
-    return this.http.post(environment.urlApi + '/teste-projects.json', post, {
+    return this.http.post(environment.urlApi + '/' + environment.nameBlog + '.json', post, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),

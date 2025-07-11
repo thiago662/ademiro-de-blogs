@@ -12,7 +12,7 @@ export class DetailService {
   ) { }
 
   getPost(id: any) {
-    return this.http.get(environment.urlApi + '/teste-projects/' + id + '.json', {
+    return this.http.get(environment.urlApi + '/' + environment.nameBlog + '/' + id + '.json', {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
@@ -20,7 +20,7 @@ export class DetailService {
   }
 
   savePost(id: any, post: any) {
-    return this.http.put(environment.urlApi + '/teste-projects/' + id + '.json', post, {
+    return this.http.put(environment.urlApi + '/' + environment.nameBlog + '/' + id + '.json', post, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
@@ -28,7 +28,7 @@ export class DetailService {
   }
 
   deletePost(id: any) {
-    return this.http.delete(environment.urlApi + '/teste-projects/' + id + '.json', {
+    return this.http.delete(environment.urlApi + '/' + environment.nameBlog + '/' + id + '.json', {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
