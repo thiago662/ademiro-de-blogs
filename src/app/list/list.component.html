@@ -1,4 +1,4 @@
-<div class="m-2">
+<div class="mx-3 mt-3">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Criar post</button>
 </div>
 
@@ -29,26 +29,28 @@
     </div>
 </div>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-4 g-3">
 @for (list of lists; track $index) {
-    <div class="card m-3 p-0" style="width: 18rem;">
-        @if (list?.thumbnail != null) {
-            <img src="{{ list?.thumbnail }}" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="...">
-        } @else {
-            <div class="bg-primary card-img-top" style="object-fit: cover; height: 200px;"></div>
-        }
-        <div class="card-body">
-            <h5 class="card-title text-truncate">{{ list?.title }}</h5>
-            <p class="card-subtitle text-truncate">{{ list?.subtitle }}</p>
-        </div>
-        <div class="card-footer p-3 bg-transparent border-0 text-muted d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                    <a class="btn btn-primary" [routerLink]="['/' + list?.id]">Editar</a>
-                    @if (list?.active) {
-                        <a class="btn btn-primary" href="{{ urlBlog + '/'  + list?.id }}" target="_blank" rel="noopener noreferrer">Abrir</a>
-                    }
-                </div>
-                <small class="text-body-secondary">{{ getDateDiff(list) }} dias</small>
+    <div class="col">
+        <div class="card m-3 p-0">
+            @if (list?.thumbnail != null) {
+                <img src="{{ list?.thumbnail }}" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="...">
+            } @else {
+                <div class="bg-primary card-img-top" style="object-fit: cover; height: 200px;"></div>
+            }
+            <div class="card-body">
+                <h5 class="card-title text-truncate">{{ list?.title }}</h5>
+                <p class="card-subtitle text-truncate">{{ list?.subtitle }}</p>
+            </div>
+            <div class="card-footer p-3 bg-transparent border-0 text-muted d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a class="btn btn-primary" [routerLink]="['/' + list?.id]">Editar</a>
+                        @if (list?.active) {
+                            <a class="btn btn-primary" href="{{ urlBlog + '/'  + list?.id }}" target="_blank" rel="noopener noreferrer">Abrir</a>
+                        }
+                    </div>
+                    <small class="text-body-secondary">{{ getDateDiff(list) }} dias</small>
+            </div>
         </div>
     </div>
 }
