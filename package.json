@@ -3,10 +3,17 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "env": "node --env-file-if-exists=.env scripts/write-env.mjs",
+    "prestart": "npm run env",
     "start": "ng serve",
+    "prebuild": "npm run env",
     "build": "ng build",
+    "prewatch": "npm run env",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "pretest": "npm run env",
+    "test": "ng test",
+    "emulators": "firebase emulators:start --project demo-ademiro --import=./emulator-seed",
+    "emulators:export": "firebase emulators:export ./emulator-seed --project demo-ademiro --force"
   },
   "private": true,
   "packageManager": "npm@11.19.0",
@@ -19,6 +26,7 @@
     "@angular/router": "^22.2.0",
     "@fortawesome/fontawesome-free": "^7.3.1",
     "bootstrap": "^5.3.8",
+    "firebase": "^13.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -26,6 +34,7 @@
     "@angular/build": "^22.2.2",
     "@angular/cli": "^22.2.2",
     "@angular/compiler-cli": "^22.2.0",
+    "firebase-tools": "^15.33.0",
     "jsdom": "^30.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
