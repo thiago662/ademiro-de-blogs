@@ -12,6 +12,7 @@
     "watch": "ng build --watch --configuration development",
     "pretest": "npm run env",
     "test": "ng test",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-ademiro \"node --test tests/rules/*.test.mjs\"",
     "emulators": "firebase emulators:start --project demo-ademiro --import=./emulator-seed",
     "emulators:export": "firebase emulators:export ./emulator-seed --project demo-ademiro --force"
   },
