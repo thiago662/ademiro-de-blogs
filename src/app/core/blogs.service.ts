@@ -17,6 +17,7 @@ import {
   type DocumentSnapshot,
 } from 'firebase/firestore';
 import { AuthService } from './auth.service';
+import { FieldDef } from './fields';
 import { auth, db } from './firebase';
 
 export interface BlogInput {
@@ -29,7 +30,7 @@ export interface BlogInput {
 
 export interface Blog extends BlogInput {
   id: string;
-  fieldDefs: unknown[];
+  fieldDefs: FieldDef[];
   settings: Record<string, unknown>;
 }
 
@@ -98,6 +99,16 @@ export class BlogsService {
 
   update(id: string, input: BlogInput) {
     return updateDoc(doc(db, 'blogs', id), { ...input, updatedAt: serverTimestamp() });
+  }
+
+  /** Só admin (rules). */
+  saveFieldDefs(id: string, fieldDefs: FieldDef[]) {
+    return updateDoc(doc(db, 'blogs', id), { fieldDefs, updatedAt: serverTimestamp() });
+  }
+
+  /** Admin ou editor (rules permitem ao editor alterar só settings). */
+  saveSettings(id: string, settings: Record<string, unknown>) {
+    return updateDoc(doc(db, 'blogs', id), { settings, updatedAt: serverTimestamp() });
   }
 
   // ponytail: batch único (limite 500 operações = membros + posts). Paginar se algum blog passar disso.

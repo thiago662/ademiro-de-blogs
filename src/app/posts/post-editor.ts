@@ -3,21 +3,27 @@ import { Component, OnInit, computed, inject, input, signal } from '@angular/cor
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Blog, BlogRole, BlogsService } from '../core/blogs.service';
+import {
+  FieldDef,
+  FieldType,
+  FieldsGroup,
+  buildFieldsGroup,
+  fieldKey,
+  fieldTypes,
+  parseTags,
+  readFieldsGroup,
+} from '../core/fields';
 import { Post, PostInput, PostStatus, PostsService } from '../core/posts.service';
 import { slugify } from '../core/slug';
+import { CustomFields } from './custom-fields';
 import { MarkdownEditor } from './markdown-editor';
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const HTTPS = /^(https:\/\/.+)?$/;
 
-/** "Angular, angular , RxJS" → ['angular', 'rxjs'] */
-export function parseTags(text: string): string[] {
-  return [...new Set(text.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean))];
-}
-
 @Component({
   selector: 'app-post-editor',
-  imports: [ReactiveFormsModule, RouterLink, DatePipe, MarkdownEditor],
+  imports: [ReactiveFormsModule, RouterLink, DatePipe, MarkdownEditor, CustomFields],
   templateUrl: './post-editor.html',
 })
 export class PostEditor implements OnInit {
@@ -37,6 +43,18 @@ export class PostEditor implements OnInit {
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   protected readonly saved = signal(false);
+
+  /** Campos do blog com escopo "post" → post.custom */
+  protected readonly postDefs = signal<FieldDef[]>([]);
+  protected readonly customForm = signal<FieldsGroup>(buildFieldsGroup([], {}));
+  /** Campos avulsos só deste post → post.extras */
+  protected readonly extraDefs = signal<FieldDef[]>([]);
+  protected readonly extrasForm = signal<FieldsGroup>(buildFieldsGroup([], {}));
+  protected readonly extraTypes = fieldTypes.filter((t) => t.value !== 'select');
+  protected readonly newExtra = new FormGroup({
+    label: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    type: new FormControl<FieldType>('text', { nonNullable: true }),
+  });
 
   protected readonly isNew = computed(() => this.postId() === 'new');
   protected readonly canWrite = computed(() => this.role() === 'admin' || this.role() === 'editor');
@@ -63,16 +81,54 @@ export class PostEditor implements OnInit {
     this.blog.set(blog);
     this.role.set(await this.blogsService.roleIn(blog));
 
+    let post: Post | null = null;
     if (!this.isNew()) {
-      const post = await this.postsService.get(this.blogId(), this.postId());
+      post = await this.postsService.get(this.blogId(), this.postId());
       if (!post) return this.error.set('Post não encontrado.');
       this.post.set(post);
       const { title, subtitle, slug, summary, coverUrl, tags, status, body } = post;
       this.form.setValue({ title, subtitle, slug, summary, coverUrl, tags: tags.join(', '), status });
       this.body.set(body);
     }
-    if (!this.canWrite()) this.form.disable();
+
+    const postDefs = blog.fieldDefs.filter((d) => d.scope === 'post');
+    this.postDefs.set(postDefs);
+    this.customForm.set(buildFieldsGroup(postDefs, post?.custom ?? {}));
+    const extras = post?.extras ?? [];
+    const extraDefs = extras.map(({ key, label, type }) => this.extraDef(key, label, type));
+    this.extraDefs.set(extraDefs);
+    this.extrasForm.set(buildFieldsGroup(extraDefs, Object.fromEntries(extras.map((e) => [e.key, e.value]))));
+
+    if (!this.canWrite()) {
+      this.form.disable();
+      this.customForm().disable();
+      this.extrasForm().disable();
+    }
     this.ready.set(true);
+  }
+
+  protected invalid() {
+    return this.form.invalid || this.customForm().invalid || this.extrasForm().invalid;
+  }
+
+  protected addExtra() {
+    const { label, type } = this.newExtra.getRawValue();
+    const taken = new Set([...this.postDefs(), ...this.extraDefs()].map((d) => d.key));
+    let key = fieldKey(label);
+    for (let i = 2; taken.has(key); i++) key = `${fieldKey(label)}_${i}`;
+    const def = this.extraDef(key, label.trim(), type);
+    this.extrasForm().addControl(key, buildFieldsGroup([def], {}).controls[key]);
+    this.extraDefs.update((defs) => [...defs, def]);
+    this.newExtra.reset();
+  }
+
+  protected removeExtra(key: string) {
+    this.extrasForm().removeControl(key);
+    this.extraDefs.update((defs) => defs.filter((d) => d.key !== key));
+  }
+
+  private extraDef(key: string, label: string, type: FieldType): FieldDef {
+    return { key, label, type, required: false, options: [], scope: 'post' };
   }
 
   protected titleChanged() {
@@ -82,7 +138,14 @@ export class PostEditor implements OnInit {
 
   protected async save() {
     const { tags, ...fields } = this.form.getRawValue();
-    const input: PostInput = { ...fields, tags: parseTags(tags), body: this.body() };
+    const extrasValues = readFieldsGroup(this.extraDefs(), this.extrasForm());
+    const input: PostInput = {
+      ...fields,
+      tags: parseTags(tags),
+      body: this.body(),
+      custom: readFieldsGroup(this.postDefs(), this.customForm()),
+      extras: this.extraDefs().map(({ key, label, type }) => ({ key, label, type, value: extrasValues[key] })),
+    };
     if (input.tags.length > 20) return this.error.set('Máximo de 20 tags.');
 
     await this.run(async () => {

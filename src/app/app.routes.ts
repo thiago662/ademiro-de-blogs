@@ -20,6 +20,10 @@ export const routes: Routes = [
         loadComponent: () => import('./blogs/blog-form').then((m) => m.BlogForm),
       },
       {
+        path: 'blogs/:blogId/settings',
+        loadComponent: () => import('./blogs/blog-settings').then((m) => m.BlogSettings),
+      },
+      {
         path: 'blogs/:blogId/posts/:postId',
         loadComponent: () => import('./posts/post-editor').then((m) => m.PostEditor),
       },

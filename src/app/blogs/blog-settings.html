@@ -1,0 +1,118 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/">Blogs</a></li>
+    <li class="breadcrumb-item"><a [routerLink]="['/blogs', blogId()]">{{ blog()?.name ?? '...' }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Configurações</li>
+  </ol>
+</nav>
+
+<h1 class="h4 mb-3">Configurações</h1>
+
+@if (message(); as message) {
+  <div class="alert py-2" [class.alert-success]="message.ok" [class.alert-danger]="!message.ok">{{ message.text }}</div>
+}
+
+@if (blog()) {
+  <section class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-1">Valores do blog</h2>
+      <p class="small text-body-secondary">Campos com escopo "blog": preenchidos uma vez (ex.: bio do autor, redes sociais).</p>
+
+      @if (blogDefs().length) {
+        <form [formGroup]="settingsForm()" (ngSubmit)="saveSettings()">
+          <app-custom-fields [defs]="blogDefs()" [group]="settingsForm()" [readonly]="!canEditSettings()" />
+          @if (canEditSettings()) {
+            <button type="submit" class="btn btn-success mt-3" [disabled]="settingsForm().invalid || loading()">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Salvar valores
+            </button>
+          }
+        </form>
+      } @else {
+        <p class="text-body-secondary m-0">Nenhum campo com escopo "blog".</p>
+      }
+    </div>
+  </section>
+
+  <section class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-1">Campos customizados</h2>
+      <p class="small text-body-secondary">
+        Escopo "post": aparece no formulário de todo post deste blog. Escopo "blog": aparece em "Valores do blog" acima.
+        Remover um campo apaga o valor dele na próxima vez que o blog ou o post for salvo.
+      </p>
+
+      <div class="vstack gap-2">
+        @for (row of defsForm.controls; track row; let i = $index; let first = $first; let last = $last) {
+          <div class="border rounded p-2" [formGroup]="row">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label small mb-0" [for]="'label-' + i">Rótulo</label>
+                <input [id]="'label-' + i" class="form-control form-control-sm" formControlName="label" (input)="labelChanged(row)" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label small mb-0" [for]="'key-' + i">Chave</label>
+                <input [id]="'key-' + i" class="form-control form-control-sm font-monospace" formControlName="key" />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label small mb-0" [for]="'type-' + i">Tipo</label>
+                <select [id]="'type-' + i" class="form-select form-select-sm" formControlName="type">
+                  @for (t of fieldTypes; track t.value) {
+                    <option [value]="t.value">{{ t.label }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label small mb-0" [for]="'scope-' + i">Escopo</label>
+                <select [id]="'scope-' + i" class="form-select form-select-sm" formControlName="scope">
+                  <option value="post">Post</option>
+                  <option value="blog">Blog</option>
+                </select>
+              </div>
+              <div class="col-md-1">
+                <div class="form-check">
+                  <input [id]="'req-' + i" type="checkbox" class="form-check-input" formControlName="required" />
+                  <label [for]="'req-' + i" class="form-check-label small">Obrig.</label>
+                </div>
+              </div>
+              @if (isAdmin()) {
+                <div class="col-md-2 d-flex gap-1 justify-content-end">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" title="Subir" [disabled]="first" (click)="move(i, -1)">
+                    <i class="fa-solid fa-arrow-up"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" title="Descer" [disabled]="last" (click)="move(i, 1)">
+                    <i class="fa-solid fa-arrow-down"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" title="Remover" (click)="defsForm.removeAt(i)">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              }
+              @if (row.controls.type.value === 'select') {
+                <div class="col-12">
+                  <label class="form-label small mb-0" [for]="'opt-' + i">Opções (separadas por vírgula)</label>
+                  <input [id]="'opt-' + i" class="form-control form-control-sm" formControlName="options" />
+                </div>
+              }
+              @if (row.controls.key.touched && row.controls.key.invalid) {
+                <div class="col-12 form-text text-danger">Chave: minúsculas, números e _, começando com letra.</div>
+              }
+            </div>
+          </div>
+        } @empty {
+          <p class="text-body-secondary m-0">Nenhum campo customizado.</p>
+        }
+      </div>
+
+      @if (isAdmin()) {
+        <div class="d-flex gap-2 mt-3">
+          <button type="button" class="btn btn-outline-primary" (click)="addField()">
+            <i class="fa-solid fa-plus me-1"></i> Adicionar campo
+          </button>
+          <button type="button" class="btn btn-success" [disabled]="defsForm.invalid || loading()" (click)="saveDefs()">
+            <i class="fa-solid fa-floppy-disk me-1"></i> Salvar campos
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+}

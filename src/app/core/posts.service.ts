@@ -14,6 +14,7 @@ import {
   type DocumentSnapshot,
   type Timestamp,
 } from 'firebase/firestore';
+import { ExtraField } from './fields';
 import { auth, db } from './firebase';
 
 export type PostStatus = 'draft' | 'published' | 'archived';
@@ -27,12 +28,12 @@ export interface PostInput {
   body: string;
   tags: string[];
   status: PostStatus;
+  custom: Record<string, unknown>;
+  extras: ExtraField[];
 }
 
 export interface Post extends PostInput {
   id: string;
-  custom: Record<string, unknown>;
-  extras: unknown[];
   authorUid: string;
   updatedAt: Timestamp | null;
   publishedAt: Timestamp | null;
@@ -61,8 +62,6 @@ export class PostsService {
   async create(blogId: string, input: PostInput): Promise<string> {
     const ref = await addDoc(posts(blogId), {
       ...input,
-      custom: {},
-      extras: [],
       authorUid: auth.currentUser!.uid,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),

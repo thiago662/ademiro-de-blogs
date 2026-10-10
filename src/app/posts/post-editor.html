@@ -74,13 +74,56 @@
       <app-markdown-editor [(value)]="body" [readonly]="!canWrite()" />
     </div>
 
+    @if (postDefs().length) {
+      <div class="col-12">
+        <h2 class="h6 mt-2">Campos do blog</h2>
+        <app-custom-fields [defs]="postDefs()" [group]="customForm()" [readonly]="!canWrite()" />
+      </div>
+    }
+
+    @if (extraDefs().length || canWrite()) {
+      <div class="col-12">
+        <h2 class="h6 mt-2">Campos extras deste post</h2>
+        @if (extraDefs().length) {
+          <app-custom-fields
+            [defs]="extraDefs()"
+            [group]="extrasForm()"
+            [readonly]="!canWrite()"
+            [removable]="true"
+            (remove)="removeExtra($event)"
+          />
+        }
+        @if (canWrite()) {
+          <div class="row g-2 align-items-end mt-1" [formGroup]="newExtra">
+            <div class="col-sm-5">
+              <label for="extraLabel" class="form-label small mb-0">Novo campo</label>
+              <input id="extraLabel" class="form-control form-control-sm" formControlName="label" placeholder="Ex.: Referência" />
+            </div>
+            <div class="col-sm-4">
+              <label for="extraType" class="form-label small mb-0">Tipo</label>
+              <select id="extraType" class="form-select form-select-sm" formControlName="type">
+                @for (t of extraTypes; track t.value) {
+                  <option [value]="t.value">{{ t.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-sm btn-outline-primary w-100" [disabled]="newExtra.invalid" (click)="addExtra()">
+                <i class="fa-solid fa-plus me-1"></i> Adicionar
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
     @if (error()) {
       <div class="col-12"><div class="alert alert-danger py-2 m-0">{{ error() }}</div></div>
     }
 
     @if (canWrite()) {
       <div class="col-12 d-flex flex-wrap align-items-center gap-2 pb-4">
-        <button type="submit" class="btn btn-success" [disabled]="form.invalid || loading()">
+        <button type="submit" class="btn btn-success" [disabled]="invalid() || loading()">
           <i class="fa-solid fa-floppy-disk me-1"></i> Salvar
         </button>
         @if (saved()) {

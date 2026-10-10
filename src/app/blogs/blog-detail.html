@@ -27,14 +27,19 @@
       }
     </div>
 
-    @if (role() === 'admin') {
+    @if (role()) {
       <div class="btn-group">
-        <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'members']">
-          <i class="fa-solid fa-users me-1"></i> Membros
+        <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'settings']">
+          <i class="fa-solid fa-sliders me-1"></i> Configurações
         </a>
-        <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'edit']">
-          <i class="fa-solid fa-pen me-1"></i> Editar
-        </a>
+        @if (role() === 'admin') {
+          <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'members']">
+            <i class="fa-solid fa-users me-1"></i> Membros
+          </a>
+          <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'edit']">
+            <i class="fa-solid fa-pen me-1"></i> Editar
+          </a>
+        }
       </div>
     }
   </div>

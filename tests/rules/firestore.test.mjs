@@ -278,6 +278,37 @@ describe('posts: escrita', () => {
   });
 });
 
+describe('campos customizados', () => {
+  const fieldDef = (key) => ({ key, label: key, type: 'text', required: false, options: [], scope: 'post' });
+  const many = (n, make) => Array.from({ length: n }, (_, i) => make(`f${i}`));
+
+  it('admin define campos; editor não', async () => {
+    const fieldDefs = [fieldDef('nivel')];
+    await assertSucceeds(updateDoc(doc(as.admin(), 'blogs', 'tech'), { fieldDefs, updatedAt: serverTimestamp() }));
+    await assertFails(
+      updateDoc(doc(as.editor(), 'blogs', 'tech'), { fieldDefs: [fieldDef('outro')], updatedAt: serverTimestamp() }),
+    );
+  });
+  it('limites de tamanho', async () => {
+    await assertFails(
+      updateDoc(doc(as.admin(), 'blogs', 'tech'), { fieldDefs: many(51, fieldDef), updatedAt: serverTimestamp() }),
+    );
+    const settings = Object.fromEntries(many(51, (k) => [k, 'x']));
+    await assertFails(updateDoc(doc(as.editor(), 'blogs', 'tech'), { settings, updatedAt: serverTimestamp() }));
+    await assertFails(setDoc(doc(as.editor(), 'blogs', 'tech', 'posts', 'novo'), postData(EDITOR, { custom: settings })));
+    await assertFails(
+      setDoc(doc(as.editor(), 'blogs', 'tech', 'posts', 'novo'), postData(EDITOR, { extras: many(31, (k) => ({ key: k })) })),
+    );
+  });
+  it('editor grava custom e extras no post', () =>
+    assertSucceeds(
+      setDoc(
+        doc(as.editor(), 'blogs', 'tech', 'posts', 'novo'),
+        postData(EDITOR, { custom: { nivel: 'avançado' }, extras: [{ key: 'ref', label: 'Ref', type: 'url', value: 'https://x.dev' }] }),
+      ),
+    ));
+});
+
 describe('deny by default', () => {
   it('caminho desconhecido negado até para admin', async () => {
     await assertFails(getDoc(doc(as.admin(), 'qualquer', 'coisa')));

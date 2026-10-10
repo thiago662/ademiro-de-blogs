@@ -57,7 +57,7 @@ service cloud.firestore {
         && d.body is string && d.body.size() <= 500000
         && d.tags is list && d.tags.size() <= 20
         && d.status in ['draft', 'published', 'archived']
-        && d.custom is map
+        && d.custom is map && d.custom.size() <= 50
         && d.extras is list && d.extras.size() <= 30
         && (d.status != 'published' || d.publishedAt is timestamp)
         && (d.publishedAt == null || d.publishedAt is timestamp)
@@ -73,8 +73,8 @@ service cloud.firestore {
         && d.publicUrl is string && d.publicUrl.size() <= 300
         && (d.publicUrl == '' || d.publicUrl.matches('^https://.+'))
         && d.demo is bool
-        && d.fieldDefs is list
-        && d.settings is map
+        && d.fieldDefs is list && d.fieldDefs.size() <= 50
+        && d.settings is map && d.settings.size() <= 50
         && d.updatedAt == request.time;
     }
 

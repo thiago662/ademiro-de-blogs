@@ -1,0 +1,73 @@
+<div class="row g-3" [formGroup]="group()">
+  @for (def of defs(); track def.key) {
+    @let id = 'cf-' + def.key;
+    @let control = group().controls[def.key];
+    <div [class]="def.type === 'markdown' || def.type === 'textarea' ? 'col-12' : 'col-md-6'">
+      @if (def.type !== 'boolean') {
+        <label [for]="id" class="form-label d-flex align-items-center gap-2">
+          {{ def.label }}
+          @if (def.required) {
+            <span class="text-danger" title="Obrigatório">*</span>
+          }
+          @if (removable() && !readonly()) {
+            <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-auto" (click)="remove.emit(def.key)">
+              <i class="fa-solid fa-xmark"></i> remover
+            </button>
+          }
+        </label>
+      }
+
+      @switch (def.type) {
+        @case ('textarea') {
+          <textarea [id]="id" class="form-control" rows="3" [formControlName]="def.key"></textarea>
+        }
+        @case ('markdown') {
+          <app-markdown-editor [value]="$any(control.value)" (valueChange)="control.setValue($event)" [readonly]="readonly()" />
+        }
+        @case ('number') {
+          <input [id]="id" class="form-control" inputmode="decimal" [formControlName]="def.key" />
+        }
+        @case ('date') {
+          <input [id]="id" type="date" class="form-control" [formControlName]="def.key" />
+        }
+        @case ('url') {
+          <input [id]="id" type="url" class="form-control" placeholder="https://..." [formControlName]="def.key" />
+        }
+        @case ('select') {
+          <select [id]="id" class="form-select" [formControlName]="def.key">
+            <option value="">—</option>
+            @for (option of def.options; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        }
+        @case ('tags') {
+          <input [id]="id" class="form-control" placeholder="separadas, por, vírgula" [formControlName]="def.key" />
+        }
+        @case ('boolean') {
+          <div class="form-check form-switch mt-md-4 d-flex align-items-center gap-2">
+            <input [id]="id" type="checkbox" role="switch" class="form-check-input" [formControlName]="def.key" />
+            <label [for]="id" class="form-check-label">{{ def.label }}</label>
+            @if (removable() && !readonly()) {
+              <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-auto" (click)="remove.emit(def.key)">
+                <i class="fa-solid fa-xmark"></i> remover
+              </button>
+            }
+          </div>
+        }
+        @default {
+          <input [id]="id" class="form-control" [formControlName]="def.key" />
+        }
+      }
+
+      @if (control.touched && control.invalid) {
+        <div class="form-text text-danger">
+          @if (control.errors?.['required']) { Obrigatório. }
+          @else if (def.type === 'url') { Precisa começar com https:// }
+          @else if (def.type === 'number') { Número inválido. }
+          @else { Valor inválido. }
+        </div>
+      }
+    </div>
+  }
+</div>
