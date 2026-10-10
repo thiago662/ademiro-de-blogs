@@ -43,8 +43,46 @@
     <p>{{ blog.description }}</p>
   }
 
-  <!-- Fase 3: lista de posts -->
-  <div class="border rounded p-4 text-center text-body-secondary">Os posts deste blog aparecerão aqui.</div>
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <h2 class="h5 m-0 me-auto">Posts</h2>
+    <select
+      class="form-select form-select-sm w-auto"
+      aria-label="Filtrar por status"
+      [value]="statusFilter()"
+      (change)="statusFilter.set($any($event.target).value)"
+    >
+      <option value="">Todos</option>
+      <option value="draft">Rascunhos</option>
+      <option value="published">Publicados</option>
+      <option value="archived">Arquivados</option>
+    </select>
+    @if (canWrite()) {
+      <a class="btn btn-primary btn-sm" [routerLink]="['/blogs', blog.id, 'posts', 'new']">
+        <i class="fa-solid fa-plus me-1"></i> Novo post
+      </a>
+    }
+  </div>
+
+  @if (posts()) {
+    <div class="list-group">
+      @for (post of filteredPosts(); track post.id) {
+        <a class="list-group-item list-group-item-action d-flex gap-3 align-items-center" [routerLink]="['/blogs', blog.id, 'posts', post.id]">
+          <div class="flex-grow-1 text-truncate">
+            <div class="fw-semibold text-truncate">{{ post.title }}</div>
+            @if (post.subtitle) {
+              <div class="small text-body-secondary text-truncate">{{ post.subtitle }}</div>
+            }
+          </div>
+          <span class="badge {{ statusLabels[post.status].css }}">{{ statusLabels[post.status].label }}</span>
+          <small class="text-body-secondary text-nowrap d-none d-sm-inline">{{ post.updatedAt?.toDate() | date: 'short' }}</small>
+        </a>
+      } @empty {
+        <div class="border rounded p-4 text-center text-body-secondary">Nenhum post{{ statusFilter() ? ' com esse status' : '' }}.</div>
+      }
+    </div>
+  } @else {
+    <div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Carregando</span></div>
+  }
 } @else if (notFound()) {
   <div class="alert alert-warning">Blog não encontrado. <a routerLink="/">Voltar</a></div>
 } @else {

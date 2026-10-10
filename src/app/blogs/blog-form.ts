@@ -66,7 +66,7 @@ export class BlogForm implements OnInit {
 
   protected async remove() {
     const id = this.blogId();
-    if (!id || !confirm(`Excluir o blog "${this.form.controls.name.value}" e todos os seus membros?`)) return;
+    if (!id || !confirm(`Excluir o blog "${this.form.controls.name.value}" com todos os posts e membros? Não dá para desfazer.`)) return;
     await this.run(async () => {
       await this.blogsService.remove(id);
       await this.router.navigateByUrl('/');

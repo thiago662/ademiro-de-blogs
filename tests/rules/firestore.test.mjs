@@ -63,6 +63,24 @@ const memberData = (uid, role, over = {}) => ({
   ...over,
 });
 
+const postData = (authorUid, over = {}) => ({
+  title: 'Post',
+  subtitle: '',
+  summary: '',
+  slug: 'post',
+  coverUrl: '',
+  body: '# Olá',
+  tags: [],
+  status: 'draft',
+  custom: {},
+  extras: [],
+  authorUid,
+  createdAt: serverTimestamp(),
+  updatedAt: serverTimestamp(),
+  publishedAt: null,
+  ...over,
+});
+
 beforeEach(async () => {
   await env.clearFirestore();
   await env.withSecurityRulesDisabled(async (ctx) => {
@@ -72,6 +90,12 @@ beforeEach(async () => {
     await setDoc(doc(db, 'blogs', 'demo'), blogData({ name: 'Demo', slug: 'demo', demo: true }));
     await setDoc(doc(db, 'blogs', 'tech', 'members', EDITOR), memberData(EDITOR, 'editor'));
     await setDoc(doc(db, 'blogs', 'tech', 'members', VIEWER), memberData(VIEWER, 'viewer'));
+    await setDoc(
+      doc(db, 'blogs', 'tech', 'posts', 'pub'),
+      postData(EDITOR, { slug: 'pub', status: 'published', publishedAt: serverTimestamp() }),
+    );
+    await setDoc(doc(db, 'blogs', 'tech', 'posts', 'draft'), postData(EDITOR, { slug: 'draft' }));
+    await setDoc(doc(db, 'blogs', 'demo', 'posts', 'draft'), postData(ADMIN, { slug: 'draft' }));
   });
 });
 
@@ -176,6 +200,82 @@ describe('members', () => {
   });
   it('estranho não se autopromove', () =>
     assertFails(setDoc(doc(as.stranger(), 'blogs', 'tech', 'members', STRANGER), memberData(STRANGER, 'editor'))));
+});
+
+describe('posts: leitura', () => {
+  const post = (db, blog, id) => doc(db, 'blogs', blog, 'posts', id);
+  const posts = (db, blog) => collection(db, 'blogs', blog, 'posts');
+
+  it('público lê publicado, não lê rascunho', async () => {
+    await assertSucceeds(getDoc(post(as.public(), 'tech', 'pub')));
+    await assertFails(getDoc(post(as.public(), 'tech', 'draft')));
+  });
+  it('público lista só com filtro de publicados', async () => {
+    await assertSucceeds(getDocs(query(posts(as.public(), 'tech'), where('status', '==', 'published'))));
+    await assertFails(getDocs(posts(as.public(), 'tech')));
+  });
+  it('membros (editor e viewer) e admin leem rascunhos', async () => {
+    for (const db of [as.editor(), as.viewer(), as.admin()]) {
+      await assertSucceeds(getDocs(posts(db, 'tech')));
+    }
+  });
+  it('estranho só vê publicados', async () => {
+    await assertFails(getDoc(post(as.stranger(), 'tech', 'draft')));
+    await assertSucceeds(getDoc(post(as.stranger(), 'tech', 'pub')));
+  });
+  it('visitante lê rascunho só em blog demo', async () => {
+    await assertSucceeds(getDocs(posts(as.guest(), 'demo')));
+    await assertFails(getDoc(post(as.guest(), 'tech', 'draft')));
+  });
+});
+
+describe('posts: escrita', () => {
+  const post = (db, blog, id) => doc(db, 'blogs', blog, 'posts', id);
+
+  it('editor cria post válido no próprio blog', () =>
+    assertSucceeds(setDoc(post(as.editor(), 'tech', 'novo'), postData(EDITOR, { slug: 'novo' }))));
+  it('editor publica com publishedAt', () =>
+    assertSucceeds(
+      setDoc(post(as.editor(), 'tech', 'novo'), postData(EDITOR, { status: 'published', publishedAt: serverTimestamp() })),
+    ));
+  it('rejeita post inválido', async () => {
+    const bad = [
+      { title: '' },
+      { slug: 'Slug Ruim' },
+      { coverUrl: 'http://inseguro.com/a.png' },
+      { status: 'publicado' },
+      { status: 'published', publishedAt: null },
+      { body: 'x'.repeat(500001) },
+      { campoExtra: 1 },
+    ];
+    for (const over of bad) {
+      await assertFails(setDoc(post(as.editor(), 'tech', 'novo'), postData(EDITOR, over)));
+    }
+  });
+  it('autor é sempre quem cria e não muda depois', async () => {
+    await assertFails(setDoc(post(as.editor(), 'tech', 'novo'), postData(ADMIN)));
+    await assertFails(updateDoc(post(as.editor(), 'tech', 'draft'), { authorUid: ADMIN, updatedAt: serverTimestamp() }));
+  });
+  it('editor edita e exclui post do blog', async () => {
+    await assertSucceeds(updateDoc(post(as.editor(), 'tech', 'draft'), { title: 'Novo', updatedAt: serverTimestamp() }));
+    await assertSucceeds(deleteDoc(post(as.editor(), 'tech', 'draft')));
+  });
+  it('editor não escreve em blog de que não é membro', async () => {
+    await assertFails(setDoc(post(as.editor(), 'demo', 'novo'), postData(EDITOR)));
+    await assertFails(deleteDoc(post(as.editor(), 'demo', 'draft')));
+  });
+  it('viewer, visitante, estranho e público não escrevem', async () => {
+    for (const [db, uid] of [[as.viewer(), VIEWER], [as.guest(), GUEST], [as.stranger(), STRANGER], [as.public(), null]]) {
+      await assertFails(setDoc(post(db, 'tech', 'novo'), postData(uid)));
+      await assertFails(updateDoc(post(db, 'tech', 'pub'), { title: 'X', updatedAt: serverTimestamp() }));
+      await assertFails(deleteDoc(post(db, 'tech', 'pub')));
+    }
+    await assertFails(setDoc(post(as.guest(), 'demo', 'novo'), postData(GUEST)));
+  });
+  it('admin escreve em qualquer blog', async () => {
+    await assertSucceeds(setDoc(post(as.admin(), 'demo', 'novo'), postData(ADMIN)));
+    await assertSucceeds(deleteDoc(post(as.admin(), 'tech', 'pub')));
+  });
 });
 
 describe('deny by default', () => {

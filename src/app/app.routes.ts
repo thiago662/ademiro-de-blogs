@@ -20,6 +20,10 @@ export const routes: Routes = [
         loadComponent: () => import('./blogs/blog-form').then((m) => m.BlogForm),
       },
       {
+        path: 'blogs/:blogId/posts/:postId',
+        loadComponent: () => import('./posts/post-editor').then((m) => m.PostEditor),
+      },
+      {
         path: 'blogs/:blogId/members',
         canActivate: [adminGuard],
         loadComponent: () => import('./blogs/blog-members').then((m) => m.BlogMembers),

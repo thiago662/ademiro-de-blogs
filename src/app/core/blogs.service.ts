@@ -100,11 +100,12 @@ export class BlogsService {
     return updateDoc(doc(db, 'blogs', id), { ...input, updatedAt: serverTimestamp() });
   }
 
-  // ponytail: batch único (limite 500 operações). Fase 3 inclui posts aqui; paginar se passar disso.
+  // ponytail: batch único (limite 500 operações = membros + posts). Paginar se algum blog passar disso.
   async remove(id: string) {
     const batch = writeBatch(db);
-    const members = await getDocs(collection(db, 'blogs', id, 'members'));
-    members.docs.forEach((m) => batch.delete(m.ref));
+    for (const sub of ['members', 'posts']) {
+      (await getDocs(collection(db, 'blogs', id, sub))).docs.forEach((d) => batch.delete(d.ref));
+    }
     batch.delete(doc(db, 'blogs', id));
     await batch.commit();
   }

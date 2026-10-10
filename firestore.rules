@@ -27,6 +27,43 @@ service cloud.firestore {
         && get(memberPath(blogId)).data.role == 'editor';
     }
 
+    function isMember(blogId) {
+      return signedIn() && !isGuest() && exists(memberPath(blogId));
+    }
+
+    function isDemoBlog(blogId) {
+      return get(/databases/$(database)/documents/blogs/$(blogId)).data.demo == true;
+    }
+
+    // Lê tudo do blog (inclusive rascunhos): admin, qualquer membro, visitante em blog demo.
+    function canReadAll(blogId) {
+      return isAdmin() || isMember(blogId) || (isGuest() && isDemoBlog(blogId));
+    }
+
+    function canWrite(blogId) {
+      return isAdmin() || isEditor(blogId);
+    }
+
+    function validPost(d) {
+      return d.keys().hasOnly(['title', 'subtitle', 'summary', 'slug', 'coverUrl', 'body', 'tags',
+                               'status', 'custom', 'extras', 'authorUid',
+                               'createdAt', 'updatedAt', 'publishedAt'])
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 200
+        && d.subtitle is string && d.subtitle.size() <= 300
+        && d.summary is string && d.summary.size() <= 1000
+        && d.slug is string && d.slug.size() <= 150 && d.slug.matches('^[a-z0-9]+(-[a-z0-9]+)*$')
+        && d.coverUrl is string && d.coverUrl.size() <= 1000
+        && (d.coverUrl == '' || d.coverUrl.matches('^https://.+'))
+        && d.body is string && d.body.size() <= 500000
+        && d.tags is list && d.tags.size() <= 20
+        && d.status in ['draft', 'published', 'archived']
+        && d.custom is map
+        && d.extras is list && d.extras.size() <= 30
+        && (d.status != 'published' || d.publishedAt is timestamp)
+        && (d.publishedAt == null || d.publishedAt is timestamp)
+        && d.updatedAt == request.time;
+    }
+
     function validBlog(d) {
       return d.keys().hasOnly(['name', 'slug', 'description', 'publicUrl', 'demo',
                                'fieldDefs', 'settings', 'createdAt', 'updatedAt'])
@@ -67,6 +104,18 @@ service cloud.firestore {
           && request.resource.data.label is string && request.resource.data.label.size() <= 100
           && request.resource.data.addedAt == (resource == null ? request.time : resource.data.addedAt);
         allow delete: if isAdmin();
+      }
+
+      match /posts/{postId} {
+        // Público só vê publicados: queries sem where('status','==','published') são negadas.
+        allow read: if resource.data.status == 'published' || canReadAll(blogId);
+        allow create: if canWrite(blogId) && validPost(request.resource.data)
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.authorUid == request.auth.uid;
+        allow update: if canWrite(blogId) && validPost(request.resource.data)
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.authorUid == resource.data.authorUid;
+        allow delete: if canWrite(blogId);
       }
     }
 
