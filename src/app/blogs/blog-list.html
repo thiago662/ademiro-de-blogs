@@ -1,0 +1,43 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 m-0">Blogs</h1>
+  @if (authService.isAdmin()) {
+    <a class="btn btn-primary" routerLink="/blogs/new"><i class="fa-solid fa-plus me-1"></i> Novo blog</a>
+  }
+</div>
+
+@if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+}
+
+@if (blogs(); as blogs) {
+  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+    @for (blog of blogs; track blog.id) {
+      <div class="col">
+        <a class="card h-100 text-decoration-none" [routerLink]="['/blogs', blog.id]">
+          <div class="card-body">
+            <h2 class="h5 card-title">
+              {{ blog.name }}
+              @if (blog.demo) {
+                <span class="badge text-bg-info align-middle ms-1">demo</span>
+              }
+            </h2>
+            <p class="card-text text-body-secondary small mb-1">/{{ blog.slug }}</p>
+            @if (blog.description) {
+              <p class="card-text">{{ blog.description }}</p>
+            }
+          </div>
+        </a>
+      </div>
+    } @empty {
+      <p class="text-body-secondary">
+        @if (authService.isAdmin()) {
+          Nenhum blog ainda. Crie o primeiro.
+        } @else {
+          Você ainda não tem acesso a nenhum blog.
+        }
+      </p>
+    }
+  </div>
+} @else if (!error()) {
+  <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando</span></div>
+}

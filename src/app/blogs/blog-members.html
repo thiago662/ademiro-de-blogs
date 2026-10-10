@@ -1,0 +1,72 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/">Blogs</a></li>
+    <li class="breadcrumb-item"><a [routerLink]="['/blogs', blogId()]">{{ blog()?.name ?? '...' }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Membros</li>
+  </ol>
+</nav>
+
+<h1 class="h4 mb-3">Membros</h1>
+
+@if (error()) {
+  <div class="alert alert-danger py-2">{{ error() }}</div>
+}
+
+<div class="table-responsive mb-4">
+  <table class="table align-middle">
+    <thead>
+      <tr><th>Nome</th><th>UID</th><th>Papel</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (member of members(); track member.uid) {
+        <tr>
+          <td>{{ member.label || '—' }}</td>
+          <td><code class="small">{{ member.uid }}</code></td>
+          <td>
+            <select
+              class="form-select form-select-sm"
+              [value]="member.role"
+              [disabled]="loading()"
+              (change)="changeRole(member, $any($event.target).value)"
+            >
+              <option value="editor">Editor (ler, criar, editar, excluir)</option>
+              <option value="viewer">Somente leitura</option>
+            </select>
+          </td>
+          <td class="text-end">
+            <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="loading()" (click)="remove(member)">
+              <i class="fa-solid fa-user-minus"></i>
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="4" class="text-body-secondary">Nenhum membro. Admins já têm acesso total.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<h2 class="h6">Adicionar membro</h2>
+<form [formGroup]="form" (ngSubmit)="add()" class="row g-2 align-items-end" style="max-width: 56rem">
+  <div class="col-md-4">
+    <label for="uid" class="form-label small">UID</label>
+    <input id="uid" class="form-control" formControlName="uid" placeholder="Console Firebase > Authentication" />
+  </div>
+  <div class="col-md-3">
+    <label for="label" class="form-label small">Nome (para identificar)</label>
+    <input id="label" class="form-control" formControlName="label" />
+  </div>
+  <div class="col-md-3">
+    <label for="role" class="form-label small">Papel</label>
+    <select id="role" class="form-select" formControlName="role">
+      <option value="editor">Editor</option>
+      <option value="viewer">Somente leitura</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary w-100" [disabled]="form.invalid || loading()">Adicionar</button>
+  </div>
+</form>
+<p class="form-text">
+  O usuário precisa existir em Authentication (crie no console do Firebase). Se o UID já for membro, o papel é atualizado.
+</p>

@@ -6,15 +6,32 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import { auth } from './firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from './firebase';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   readonly user = signal<User | null>(auth.currentUser);
   readonly isGuest = computed(() => this.user()?.isAnonymous ?? false);
+  readonly isAdmin = signal(false);
 
   constructor() {
-    onAuthStateChanged(auth, (user) => this.user.set(user));
+    onAuthStateChanged(auth, async (user) => {
+      this.user.set(user);
+      this.isAdmin.set(await this.checkAdmin());
+    });
+  }
+
+  /** Consulta a allowlist. As rules são a proteção real; isto só decide o que a UI mostra. */
+  async checkAdmin(): Promise<boolean> {
+    await auth.authStateReady();
+    const user = auth.currentUser;
+    if (!user || user.isAnonymous) return false;
+    try {
+      return (await getDoc(doc(db, 'admins', user.uid))).exists();
+    } catch {
+      return false;
+    }
   }
 
   login(email: string, password: string) {

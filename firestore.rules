@@ -18,12 +18,64 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
+    function memberPath(blogId) {
+      return /databases/$(database)/documents/blogs/$(blogId)/members/$(request.auth.uid);
+    }
+
+    function isEditor(blogId) {
+      return signedIn() && !isGuest() && exists(memberPath(blogId))
+        && get(memberPath(blogId)).data.role == 'editor';
+    }
+
+    function validBlog(d) {
+      return d.keys().hasOnly(['name', 'slug', 'description', 'publicUrl', 'demo',
+                               'fieldDefs', 'settings', 'createdAt', 'updatedAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 100
+        && d.slug is string && d.slug.size() <= 100 && d.slug.matches('^[a-z0-9]+(-[a-z0-9]+)*$')
+        && d.description is string && d.description.size() <= 500
+        && d.publicUrl is string && d.publicUrl.size() <= 300
+        && (d.publicUrl == '' || d.publicUrl.matches('^https://.+'))
+        && d.demo is bool
+        && d.fieldDefs is list
+        && d.settings is map
+        && d.updatedAt == request.time;
+    }
+
     match /admins/{uid} {
       allow read: if signedIn() && request.auth.uid == uid;
       allow write: if false;
     }
 
-    // Deny by default. Cada coleção ganha sua regra nas próximas fases.
+    match /blogs/{blogId} {
+      // Público: os fronts dos blogs leem nome, settings e fieldDefs.
+      allow read: if true;
+      allow create: if isAdmin() && validBlog(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+      allow update: if validBlog(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (isAdmin()
+            || (isEditor(blogId)
+                && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['settings', 'updatedAt'])));
+      allow delete: if isAdmin();
+
+      match /members/{uid} {
+        allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+        allow create, update: if isAdmin()
+          && request.resource.data.keys().hasOnly(['uid', 'role', 'label', 'addedAt'])
+          && request.resource.data.uid == uid
+          && request.resource.data.role in ['editor', 'viewer']
+          && request.resource.data.label is string && request.resource.data.label.size() <= 100
+          && request.resource.data.addedAt == (resource == null ? request.time : resource.data.addedAt);
+        allow delete: if isAdmin();
+      }
+    }
+
+    // "Meus blogs": collection group query em members filtrando pelo próprio uid.
+    match /{path=**}/members/{uid} {
+      allow read: if signedIn() && !isGuest() && resource.data.uid == request.auth.uid;
+    }
+
+    // Deny by default.
     match /{document=**} {
       allow read, write: if false;
     }

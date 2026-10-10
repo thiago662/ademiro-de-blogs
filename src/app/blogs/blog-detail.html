@@ -1,0 +1,52 @@
+@if (blog(); as blog) {
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Blogs</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ blog.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div>
+      <h1 class="h4 mb-1">
+        {{ blog.name }}
+        @if (blog.demo) {
+          <span class="badge text-bg-info align-middle ms-1">demo</span>
+        }
+      </h1>
+      <p class="text-body-secondary small mb-1">
+        /{{ blog.slug }}
+        @if (role(); as role) {
+          · {{ roleLabels[role] }}
+        }
+      </p>
+      @if (blog.publicUrl) {
+        <a [href]="blog.publicUrl" target="_blank" rel="noopener noreferrer" class="small">
+          {{ blog.publicUrl }} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      }
+    </div>
+
+    @if (role() === 'admin') {
+      <div class="btn-group">
+        <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'members']">
+          <i class="fa-solid fa-users me-1"></i> Membros
+        </a>
+        <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'edit']">
+          <i class="fa-solid fa-pen me-1"></i> Editar
+        </a>
+      </div>
+    }
+  </div>
+
+  @if (blog.description) {
+    <p>{{ blog.description }}</p>
+  }
+
+  <!-- Fase 3: lista de posts -->
+  <div class="border rounded p-4 text-center text-body-secondary">Os posts deste blog aparecerão aqui.</div>
+} @else if (notFound()) {
+  <div class="alert alert-warning">Blog não encontrado. <a routerLink="/">Voltar</a></div>
+} @else {
+  <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando</span></div>
+}
