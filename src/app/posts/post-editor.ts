@@ -15,6 +15,7 @@ import {
 } from '../core/fields';
 import { Post, PostInput, PostStatus, PostsService } from '../core/posts.service';
 import { slugify } from '../core/slug';
+import { HasUnsavedChanges } from '../core/unsaved-changes.guard';
 import { CustomFields } from './custom-fields';
 import { MarkdownEditor } from './markdown-editor';
 
@@ -25,8 +26,10 @@ const HTTPS = /^(https:\/\/.+)?$/;
   selector: 'app-post-editor',
   imports: [ReactiveFormsModule, RouterLink, DatePipe, MarkdownEditor, CustomFields],
   templateUrl: './post-editor.html',
+  // Ternário, não &&: handler que retorna false faz o Angular chamar preventDefault().
+  host: { '(window:beforeunload)': 'hasUnsavedChanges() ? $event.preventDefault() : null' },
 })
-export class PostEditor implements OnInit {
+export class PostEditor implements OnInit, HasUnsavedChanges {
   private readonly blogsService = inject(BlogsService);
   private readonly postsService = inject(PostsService);
   private readonly router = inject(Router);
@@ -40,6 +43,7 @@ export class PostEditor implements OnInit {
   protected readonly role = signal<BlogRole | null>(null);
   protected readonly ready = signal(false);
   protected readonly body = signal('');
+  protected readonly bodyDirty = signal(false);
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   protected readonly saved = signal(false);
@@ -107,6 +111,13 @@ export class PostEditor implements OnInit {
     this.ready.set(true);
   }
 
+  hasUnsavedChanges() {
+    return (
+      this.canWrite() &&
+      (this.form.dirty || this.customForm().dirty || this.extrasForm().dirty || this.bodyDirty())
+    );
+  }
+
   protected invalid() {
     return this.form.invalid || this.customForm().invalid || this.extrasForm().invalid;
   }
@@ -119,12 +130,14 @@ export class PostEditor implements OnInit {
     const def = this.extraDef(key, label.trim(), type);
     this.extrasForm().addControl(key, buildFieldsGroup([def], {}).controls[key]);
     this.extraDefs.update((defs) => [...defs, def]);
+    this.extrasForm().markAsDirty();
     this.newExtra.reset();
   }
 
   protected removeExtra(key: string) {
     this.extrasForm().removeControl(key);
     this.extraDefs.update((defs) => defs.filter((d) => d.key !== key));
+    this.extrasForm().markAsDirty();
   }
 
   private extraDef(key: string, label: string, type: FieldType): FieldDef {
@@ -159,6 +172,9 @@ export class PostEditor implements OnInit {
         : await this.postsService.create(blogId, input);
       this.post.set(await this.postsService.get(blogId, id));
       this.form.markAsPristine();
+      this.customForm().markAsPristine();
+      this.extrasForm().markAsPristine();
+      this.bodyDirty.set(false);
       this.saved.set(true);
       // Mesma rota → o router reaproveita este componente; o estado já está carregado acima.
       if (!current) await this.router.navigate(['/blogs', blogId, 'posts', id], { replaceUrl: true });
@@ -170,6 +186,10 @@ export class PostEditor implements OnInit {
     if (!post || !confirm(`Excluir o post "${post.title}"? Não dá para desfazer.`)) return;
     await this.run(async () => {
       await this.postsService.remove(this.blogId(), post.id);
+      this.form.markAsPristine();
+      this.customForm().markAsPristine();
+      this.extrasForm().markAsPristine();
+      this.bodyDirty.set(false);
       await this.router.navigate(['/blogs', this.blogId()]);
     });
   }

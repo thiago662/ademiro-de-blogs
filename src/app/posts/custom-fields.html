@@ -22,7 +22,7 @@
           <textarea [id]="id" class="form-control" rows="3" [formControlName]="def.key"></textarea>
         }
         @case ('markdown') {
-          <app-markdown-editor [value]="$any(control.value)" (valueChange)="control.setValue($event)" [readonly]="readonly()" />
+          <app-markdown-editor [value]="$any(control.value)" (valueChange)="control.setValue($event); control.markAsDirty()" [readonly]="readonly()" />
         }
         @case ('number') {
           <input [id]="id" class="form-control" inputmode="decimal" [formControlName]="def.key" />

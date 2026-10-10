@@ -13,6 +13,7 @@ import {
   fieldTypes,
   readFieldsGroup,
 } from '../core/fields';
+import { HasUnsavedChanges } from '../core/unsaved-changes.guard';
 import { CustomFields } from '../posts/custom-fields';
 
 type DefForm = FormGroup<{
@@ -42,8 +43,10 @@ function defForm(def?: FieldDef): DefForm {
   selector: 'app-blog-settings',
   imports: [ReactiveFormsModule, RouterLink, CustomFields],
   templateUrl: './blog-settings.html',
+  // Ternário, não &&: handler que retorna false faz o Angular chamar preventDefault().
+  host: { '(window:beforeunload)': 'hasUnsavedChanges() ? $event.preventDefault() : null' },
 })
-export class BlogSettings implements OnInit {
+export class BlogSettings implements OnInit, HasUnsavedChanges {
   private readonly blogsService = inject(BlogsService);
 
   readonly blogId = input.required<string>();
@@ -67,8 +70,18 @@ export class BlogSettings implements OnInit {
     this.load(blog);
   }
 
+  hasUnsavedChanges() {
+    return this.defsForm.dirty || this.settingsForm().dirty;
+  }
+
   protected addField() {
     this.defsForm.push(defForm());
+    this.defsForm.markAsDirty();
+  }
+
+  protected removeField(index: number) {
+    this.defsForm.removeAt(index);
+    this.defsForm.markAsDirty();
   }
 
   protected labelChanged(row: DefForm) {
@@ -79,6 +92,7 @@ export class BlogSettings implements OnInit {
     const row = this.defsForm.at(index);
     this.defsForm.removeAt(index);
     this.defsForm.insert(index + delta, row);
+    this.defsForm.markAsDirty();
   }
 
   protected async saveDefs() {
@@ -105,6 +119,7 @@ export class BlogSettings implements OnInit {
     this.blog.set(blog);
     this.defsForm.clear();
     blog.fieldDefs.forEach((def) => this.defsForm.push(defForm(def)));
+    this.defsForm.markAsPristine();
     if (!this.isAdmin()) this.defsForm.disable();
 
     const blogDefs = blog.fieldDefs.filter((d) => d.scope === 'blog');

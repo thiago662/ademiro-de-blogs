@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuard, authGuard } from './core/auth.guard';
+import { unsavedChangesGuard } from './core/unsaved-changes.guard';
 
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./login/login').then((m) => m.Login) },
@@ -21,10 +22,12 @@ export const routes: Routes = [
       },
       {
         path: 'blogs/:blogId/settings',
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () => import('./blogs/blog-settings').then((m) => m.BlogSettings),
       },
       {
         path: 'blogs/:blogId/posts/:postId',
+        canDeactivate: [unsavedChangesGuard],
         loadComponent: () => import('./posts/post-editor').then((m) => m.PostEditor),
       },
       {

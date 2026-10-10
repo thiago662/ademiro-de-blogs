@@ -71,7 +71,7 @@
 
     <div class="col-12">
       <span class="form-label d-block">Conteúdo</span>
-      <app-markdown-editor [(value)]="body" [readonly]="!canWrite()" />
+      <app-markdown-editor [(value)]="body" (valueChange)="bodyDirty.set(true)" [readonly]="!canWrite()" />
     </div>
 
     @if (postDefs().length) {
