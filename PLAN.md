@@ -2,6 +2,23 @@
 
 Gerenciador de conteúdo para múltiplos blogs, open source, publicado no GitHub Pages, com dados no Firebase (plano Spark, sem custo). Qualquer pessoa pode fazer fork e conectar o próprio projeto Firebase.
 
+## Status
+
+| Fase | Situação |
+|---|---|
+| 0 — Fundação | ✅ |
+| 1 — Autenticação | ✅ |
+| 2 — Blogs e membros | ✅ |
+| 3 — Posts e editor Markdown | ✅ |
+| 4 — Campos customizados | ✅ |
+| 5 — Segurança e qualidade | ✅ |
+| 6 — Documentação | ✅ |
+
+**Desvios do plano original:**
+- Fase 2: admin não vira "owner" do blog ao criar — admin já tem acesso global; papéis por blog são só `editor` e `viewer`.
+- Fase 5: incluído aviso de alterações não salvas (guard + `beforeunload`) e contorno de bug do Milkdown 7.22.2 com imagem sem título.
+- Testes de rules usam o projeto `demo-rules-test`, isolado do emulador de desenvolvimento.
+
 ---
 
 ## 1. Decisões

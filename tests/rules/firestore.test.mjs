@@ -13,6 +13,8 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   serverTimestamp,
   setDoc,
@@ -213,6 +215,17 @@ describe('posts: leitura', () => {
   it('público lista só com filtro de publicados', async () => {
     await assertSucceeds(getDocs(query(posts(as.public(), 'tech'), where('status', '==', 'published'))));
     await assertFails(getDocs(posts(as.public(), 'tech')));
+  });
+  it('consultas do README funcionam para o público', async () => {
+    const db = as.public();
+    await assertSucceeds(getDocs(query(collection(db, 'blogs'), where('slug', '==', 'tech'), limit(1))));
+    await assertSucceeds(
+      getDocs(query(posts(db, 'tech'), where('status', '==', 'published'), orderBy('publishedAt', 'desc'))),
+    );
+    await assertSucceeds(
+      getDocs(query(posts(db, 'tech'), where('status', '==', 'published'), where('slug', '==', 'pub'), limit(1))),
+    );
+    await assertFails(getDocs(query(posts(db, 'tech'), where('slug', '==', 'draft'))));
   });
   it('membros (editor e viewer) e admin leem rascunhos', async () => {
     for (const db of [as.editor(), as.viewer(), as.admin()]) {
