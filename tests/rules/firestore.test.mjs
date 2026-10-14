@@ -141,6 +141,12 @@ describe('blogs: escrita', () => {
     await assertFails(setDoc(doc(as.admin(), 'blogs', 'x3'), blogData({ publicUrl: 'http://inseguro' })));
     await assertFails(setDoc(doc(as.admin(), 'blogs', 'x4'), blogData({ hacker: true })));
   });
+  it('deployUrl é opcional e só https', async () => {
+    await assertSucceeds(setDoc(doc(as.admin(), 'blogs', 'd1'), blogData({ slug: 'd1', deployUrl: 'https://github.com/x/y/actions' })));
+    await assertSucceeds(setDoc(doc(as.admin(), 'blogs', 'd2'), blogData({ slug: 'd2', deployUrl: '' })));
+    await assertFails(setDoc(doc(as.admin(), 'blogs', 'd3'), blogData({ slug: 'd3', deployUrl: 'http://inseguro' })));
+    await assertFails(setDoc(doc(as.admin(), 'blogs', 'd4'), blogData({ slug: 'd4', deployUrl: 42 })));
+  });
   it('não-admin não cria blog', async () => {
     for (const db of [as.public(), as.guest(), as.stranger(), as.editor(), as.viewer()]) {
       await assertFails(setDoc(doc(db, 'blogs', 'novo'), blogData({ slug: 'novo' })));

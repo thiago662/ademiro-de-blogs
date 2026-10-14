@@ -29,6 +29,10 @@ export class BlogForm implements OnInit {
       nonNullable: true,
       validators: [Validators.maxLength(300), Validators.pattern(/^(https:\/\/.+)?$/)],
     }),
+    deployUrl: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(300), Validators.pattern(/^(https:\/\/.+)?$/)],
+    }),
     demo: new FormControl(false, { nonNullable: true }),
   });
   protected readonly loading = signal(false);
@@ -42,8 +46,8 @@ export class BlogForm implements OnInit {
       this.error.set('Blog não encontrado.');
       return;
     }
-    const { name, slug, description, publicUrl, demo } = blog;
-    this.form.setValue({ name, slug, description, publicUrl, demo });
+    const { name, slug, description, publicUrl, deployUrl, demo } = blog;
+    this.form.setValue({ name, slug, description, publicUrl, deployUrl, demo });
   }
 
   protected nameChanged() {

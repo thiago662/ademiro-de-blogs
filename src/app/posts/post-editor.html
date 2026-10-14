@@ -15,6 +15,14 @@
     <div class="alert alert-secondary py-2"><i class="fa-solid fa-eye me-1"></i> Modo somente leitura.</div>
   }
 
+  @if (publicPostUrl()) {
+    <div class="d-flex justify-content-end mb-2">
+      <a class="btn btn-sm btn-outline-primary" [href]="publicPostUrl()" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Ver no blog
+      </a>
+    </div>
+  }
+
   <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
     <div class="col-lg-8">
       <label for="title" class="form-label">Título</label>

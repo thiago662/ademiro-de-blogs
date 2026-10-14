@@ -28,18 +28,26 @@
     </div>
 
     @if (role()) {
-      <div class="btn-group">
-        <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'settings']">
-          <i class="fa-solid fa-sliders me-1"></i> Configurações
-        </a>
-        @if (role() === 'admin') {
-          <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'members']">
-            <i class="fa-solid fa-users me-1"></i> Membros
-          </a>
-          <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'edit']">
-            <i class="fa-solid fa-pen me-1"></i> Editar
+      <div class="d-flex flex-wrap gap-2">
+        @if (canWrite() && blog.deployUrl) {
+          <a class="btn btn-outline-success" [href]="blog.deployUrl" target="_blank" rel="noopener noreferrer"
+             title="Abre o workflow de deploy para gerar o site com os posts atualizados">
+            <i class="fa-solid fa-rotate me-1"></i> Republicar site
           </a>
         }
+        <div class="btn-group">
+          <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'settings']">
+            <i class="fa-solid fa-sliders me-1"></i> Configurações
+          </a>
+          @if (role() === 'admin') {
+            <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'members']">
+              <i class="fa-solid fa-users me-1"></i> Membros
+            </a>
+            <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'edit']">
+              <i class="fa-solid fa-pen me-1"></i> Editar
+            </a>
+          }
+        </div>
       </div>
     }
   </div>

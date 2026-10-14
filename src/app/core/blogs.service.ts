@@ -25,6 +25,8 @@ export interface BlogInput {
   slug: string;
   description: string;
   publicUrl: string;
+  /** Página do workflow de deploy do site do blog (ex.: GitHub Actions), aberta pelo botão "Republicar site". */
+  deployUrl: string;
   demo: boolean;
 }
 
@@ -43,7 +45,8 @@ export interface Member {
   label: string;
 }
 
-const toBlog = (snap: DocumentSnapshot) => ({ id: snap.id, ...snap.data() }) as Blog;
+// deployUrl: blogs criados antes do campo existir não o têm.
+const toBlog = (snap: DocumentSnapshot) => ({ id: snap.id, deployUrl: '', ...snap.data() }) as Blog;
 const byName = (a: Blog, b: Blog) => a.name.localeCompare(b.name);
 
 @Injectable({ providedIn: 'root' })

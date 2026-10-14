@@ -65,13 +65,16 @@ service cloud.firestore {
     }
 
     function validBlog(d) {
-      return d.keys().hasOnly(['name', 'slug', 'description', 'publicUrl', 'demo',
+      return d.keys().hasOnly(['name', 'slug', 'description', 'publicUrl', 'deployUrl', 'demo',
                                'fieldDefs', 'settings', 'createdAt', 'updatedAt'])
         && d.name is string && d.name.size() > 0 && d.name.size() <= 100
         && d.slug is string && d.slug.size() <= 100 && d.slug.matches('^[a-z0-9]+(-[a-z0-9]+)*$')
         && d.description is string && d.description.size() <= 500
         && d.publicUrl is string && d.publicUrl.size() <= 300
         && (d.publicUrl == '' || d.publicUrl.matches('^https://.+'))
+        // Opcional: blogs criados antes do campo existir não o têm.
+        && d.get('deployUrl', '') is string && d.get('deployUrl', '').size() <= 300
+        && (d.get('deployUrl', '') == '' || d.get('deployUrl', '').matches('^https://.+'))
         && d.demo is bool
         && d.fieldDefs is list && d.fieldDefs.size() <= 50
         && d.settings is map && d.settings.size() <= 50

@@ -60,6 +60,13 @@ export class PostEditor implements OnInit, HasUnsavedChanges {
     type: new FormControl<FieldType>('text', { nonNullable: true }),
   });
 
+  /** Link do post no site do blog — só para o que está salvo e publicado. Pressupõe rotas /:slug no site. */
+  protected readonly publicPostUrl = computed(() => {
+    const publicUrl = this.blog()?.publicUrl;
+    const post = this.post();
+    return publicUrl && post?.status === 'published' ? `${publicUrl.replace(/\/+$/, '')}/${post.slug}` : '';
+  });
+
   protected readonly isNew = computed(() => this.postId() === 'new');
   protected readonly canWrite = computed(() => this.role() === 'admin' || this.role() === 'editor');
 

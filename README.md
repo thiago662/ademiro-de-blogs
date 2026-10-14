@@ -176,6 +176,10 @@ const [post] = (await getDocs(query(
 
 **Renderizando o Markdown:** use um parser com suporte a GFM (tabelas, listas de tarefas, tachado) — por exemplo [`marked`](https://marked.js.org/) — e **sempre sanitize** o HTML gerado com [`DOMPurify`](https://github.com/cure53/DOMPurify) antes de inserir na página.
 
+**Integração com o painel** (opcional, em *Editar blog*):
+- **URL pública** — se o site usar a rota `/<slug-do-post>`, o editor mostra o botão **Ver no blog** nos posts publicados.
+- **URL do deploy do site** — página do workflow que publica o site (ex.: `https://github.com/<usuario>/<repo>/actions/workflows/deploy.yml`). Vira o botão **Republicar site**, útil quando o site gera as páginas no build (prerender) e precisa ser publicado de novo após um post novo.
+
 > **Imagens:** o editor grava imagens em bloco como `![1.00](url "legenda")` — o *alt* guarda a proporção da imagem e a legenda vai no *título*. Ao renderizar, use o título como texto alternativo.
 
 ---

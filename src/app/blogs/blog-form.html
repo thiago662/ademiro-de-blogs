@@ -28,6 +28,17 @@
   </div>
 
   <div class="col-12">
+    <label for="deployUrl" class="form-label">URL do deploy do site</label>
+    <input id="deployUrl" type="url" class="form-control" formControlName="deployUrl" placeholder="https://github.com/usuario/repo/actions/workflows/deploy.yml" />
+    <div class="form-text">
+      Página do workflow que publica o site do blog. Vira o botão "Republicar site", útil quando o site gera as páginas no build.
+    </div>
+    @if (form.controls.deployUrl.touched && form.controls.deployUrl.errors?.['pattern']) {
+      <div class="form-text text-danger">Precisa começar com https://</div>
+    }
+  </div>
+
+  <div class="col-12">
     <div class="form-check form-switch">
       <input id="demo" type="checkbox" role="switch" class="form-check-input" formControlName="demo" />
       <label for="demo" class="form-check-label">Blog de demonstração (visitantes podem ver tudo, sem editar)</label>
