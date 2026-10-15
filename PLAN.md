@@ -183,7 +183,7 @@ Cada item = 1 PR pequeno. Critério de pronto ao final de cada fase.
 ✅ Cada blog tem seus próprios campos; post pode ter campos extras só dele.
 
 ### Fase 5 — Segurança e qualidade
-- **PR 13 · Hardening:** suíte completa de testes cobrindo a matriz da seção 4, CI rodando testes no emulador, Dependabot, revisão final de CSP, checklist de console (domínios autorizados, proteção contra enumeração de e-mail, App Check opcional).
+- **PR 13 · Hardening:** suíte completa de testes cobrindo a matriz da seção 4, CI rodando testes no emulador, Dependabot (removido depois: PRs semanais demais para o tamanho do projeto; usar só os security updates do GitHub), revisão final de CSP, checklist de console (domínios autorizados, proteção contra enumeração de e-mail, App Check opcional).
 
 ✅ Todos os cenários da matriz testados e verdes no CI.
 
