@@ -1,0 +1,135 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isGuest() {
+      return signedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous';
+    }
+
+    // Auth permite criar conta via API mesmo sem tela de cadastro:
+    // estar logado nunca basta, admin precisa estar na allowlist.
+    function isAdmin() {
+      return signedIn() && !isGuest()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function memberPath(blogId) {
+      return /databases/$(database)/documents/blogs/$(blogId)/members/$(request.auth.uid);
+    }
+
+    function isEditor(blogId) {
+      return signedIn() && !isGuest() && exists(memberPath(blogId))
+        && get(memberPath(blogId)).data.role == 'editor';
+    }
+
+    function isMember(blogId) {
+      return signedIn() && !isGuest() && exists(memberPath(blogId));
+    }
+
+    function isDemoBlog(blogId) {
+      return get(/databases/$(database)/documents/blogs/$(blogId)).data.demo == true;
+    }
+
+    // Lê tudo do blog (inclusive rascunhos): admin, qualquer membro, visitante em blog demo.
+    function canReadAll(blogId) {
+      return isAdmin() || isMember(blogId) || (isGuest() && isDemoBlog(blogId));
+    }
+
+    function canWrite(blogId) {
+      return isAdmin() || isEditor(blogId);
+    }
+
+    function validPost(d) {
+      return d.keys().hasOnly(['title', 'subtitle', 'summary', 'slug', 'coverUrl', 'body', 'tags',
+                               'status', 'custom', 'extras', 'authorUid',
+                               'createdAt', 'updatedAt', 'publishedAt'])
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 200
+        && d.subtitle is string && d.subtitle.size() <= 300
+        && d.summary is string && d.summary.size() <= 1000
+        && d.slug is string && d.slug.size() <= 150 && d.slug.matches('^[a-z0-9]+(-[a-z0-9]+)*$')
+        && d.coverUrl is string && d.coverUrl.size() <= 1000
+        && (d.coverUrl == '' || d.coverUrl.matches('^https://.+'))
+        && d.body is string && d.body.size() <= 500000
+        && d.tags is list && d.tags.size() <= 20
+        && d.status in ['draft', 'published', 'archived']
+        && d.custom is map && d.custom.size() <= 50
+        && d.extras is list && d.extras.size() <= 30
+        && (d.status != 'published' || d.publishedAt is timestamp)
+        && (d.publishedAt == null || d.publishedAt is timestamp)
+        && d.updatedAt == request.time;
+    }
+
+    function validBlog(d) {
+      return d.keys().hasOnly(['name', 'slug', 'description', 'publicUrl', 'deployUrl', 'demo',
+                               'fieldDefs', 'settings', 'createdAt', 'updatedAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 100
+        && d.slug is string && d.slug.size() <= 100 && d.slug.matches('^[a-z0-9]+(-[a-z0-9]+)*$')
+        && d.description is string && d.description.size() <= 500
+        && d.publicUrl is string && d.publicUrl.size() <= 300
+        && (d.publicUrl == '' || d.publicUrl.matches('^https://.+'))
+        // Opcional: blogs criados antes do campo existir não o têm.
+        && d.get('deployUrl', '') is string && d.get('deployUrl', '').size() <= 300
+        && (d.get('deployUrl', '') == '' || d.get('deployUrl', '').matches('^https://.+'))
+        && d.demo is bool
+        && d.fieldDefs is list && d.fieldDefs.size() <= 50
+        && d.settings is map && d.settings.size() <= 50
+        && d.updatedAt == request.time;
+    }
+
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /blogs/{blogId} {
+      // Público: os fronts dos blogs leem nome, settings e fieldDefs.
+      allow read: if true;
+      allow create: if isAdmin() && validBlog(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+      allow update: if validBlog(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (isAdmin()
+            || (isEditor(blogId)
+                && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['settings', 'updatedAt'])));
+      allow delete: if isAdmin();
+
+      match /members/{uid} {
+        allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+        allow create, update: if isAdmin()
+          && request.resource.data.keys().hasOnly(['uid', 'role', 'label', 'addedAt'])
+          && request.resource.data.uid == uid
+          && request.resource.data.role in ['editor', 'viewer']
+          && request.resource.data.label is string && request.resource.data.label.size() <= 100
+          && request.resource.data.addedAt == (resource == null ? request.time : resource.data.addedAt);
+        allow delete: if isAdmin();
+      }
+
+      match /posts/{postId} {
+        // Público só vê publicados: queries sem where('status','==','published') são negadas.
+        allow read: if resource.data.status == 'published' || canReadAll(blogId);
+        allow create: if canWrite(blogId) && validPost(request.resource.data)
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.authorUid == request.auth.uid;
+        allow update: if canWrite(blogId) && validPost(request.resource.data)
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.authorUid == resource.data.authorUid;
+        allow delete: if canWrite(blogId);
+      }
+    }
+
+    // "Meus blogs": collection group query em members filtrando pelo próprio uid.
+    match /{path=**}/members/{uid} {
+      allow read: if signedIn() && !isGuest() && resource.data.uid == request.auth.uid;
+    }
+
+    // Deny by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

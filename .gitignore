@@ -1,4 +1,4 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
 /dist
@@ -26,6 +26,7 @@ yarn-error.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/mcp.json
 .history/*
 
 # Miscellaneous
@@ -36,6 +37,18 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+__screenshots__/
+
+# Local notes (never commit)
+/.private
+
+# Local config (gerado/pessoal, nunca commitar)
+.env
+/src/environments
+.firebaserc
+firebase-debug*.log
+firestore-debug.log
+ui-debug.log
 
 # System files
 .DS_Store

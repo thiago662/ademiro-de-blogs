@@ -1,0 +1,154 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/">Blogs</a></li>
+    <li class="breadcrumb-item"><a [routerLink]="['/blogs', blogId()]">{{ blog()?.name ?? '...' }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ isNew() ? 'Novo post' : (post()?.title ?? '...') }}</li>
+  </ol>
+</nav>
+
+@if (error() && !ready()) {
+  <div class="alert alert-warning">{{ error() }}</div>
+} @else if (!ready()) {
+  <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando</span></div>
+} @else {
+  @if (!canWrite()) {
+    <div class="alert alert-secondary py-2"><i class="fa-solid fa-eye me-1"></i> Modo somente leitura.</div>
+  }
+
+  @if (publicPostUrl()) {
+    <div class="d-flex justify-content-end mb-2">
+      <a class="btn btn-sm btn-outline-primary" [href]="publicPostUrl()" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Ver no blog
+      </a>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="row g-3">
+    <div class="col-lg-8">
+      <label for="title" class="form-label">Título</label>
+      <input id="title" class="form-control form-control-lg" formControlName="title" (input)="titleChanged()" />
+    </div>
+
+    <div class="col-lg-4">
+      <label for="status" class="form-label">Status</label>
+      <select id="status" class="form-select form-select-lg" formControlName="status">
+        <option value="draft">Rascunho</option>
+        <option value="published">Publicado</option>
+        <option value="archived">Arquivado</option>
+      </select>
+    </div>
+
+    <div class="col-lg-8">
+      <label for="subtitle" class="form-label">Subtítulo</label>
+      <input id="subtitle" class="form-control" formControlName="subtitle" />
+    </div>
+
+    <div class="col-lg-4">
+      <label for="slug" class="form-label">Slug</label>
+      <input id="slug" class="form-control" formControlName="slug" />
+      @if (form.controls.slug.touched && form.controls.slug.errors?.['pattern']) {
+        <div class="form-text text-danger">Use só letras minúsculas, números e hífens.</div>
+      }
+    </div>
+
+    <div class="col-12">
+      <label for="summary" class="form-label">Resumo</label>
+      <textarea id="summary" class="form-control" rows="2" formControlName="summary"></textarea>
+    </div>
+
+    <div class="col-lg-8">
+      <label for="coverUrl" class="form-label">Imagem de capa (URL)</label>
+      <input id="coverUrl" type="url" class="form-control" formControlName="coverUrl" placeholder="https://..." />
+      @if (form.controls.coverUrl.errors?.['pattern']) {
+        <div class="form-text text-danger">Precisa começar com https://</div>
+      }
+      <label for="tags" class="form-label mt-3">Tags</label>
+      <input id="tags" class="form-control" formControlName="tags" placeholder="angular, carreira, estudos" />
+      <div class="form-text">Separadas por vírgula (máx. 20).</div>
+    </div>
+
+    <div class="col-lg-4">
+      @if (form.controls.coverUrl.value && form.controls.coverUrl.valid) {
+        <img [src]="form.controls.coverUrl.value" alt="Prévia da capa" class="img-fluid rounded border cover-preview" />
+      } @else {
+        <div class="rounded border bg-body-tertiary cover-preview d-flex align-items-center justify-content-center text-body-secondary">
+          <i class="fa-regular fa-image fa-2x"></i>
+        </div>
+      }
+    </div>
+
+    <div class="col-12">
+      <span class="form-label d-block">Conteúdo</span>
+      <app-markdown-editor [(value)]="body" (valueChange)="bodyDirty.set(true)" [readonly]="!canWrite()" />
+    </div>
+
+    @if (postDefs().length) {
+      <div class="col-12">
+        <h2 class="h6 mt-2">Campos do blog</h2>
+        <app-custom-fields [defs]="postDefs()" [group]="customForm()" [readonly]="!canWrite()" />
+      </div>
+    }
+
+    @if (extraDefs().length || canWrite()) {
+      <div class="col-12">
+        <h2 class="h6 mt-2">Campos extras deste post</h2>
+        @if (extraDefs().length) {
+          <app-custom-fields
+            [defs]="extraDefs()"
+            [group]="extrasForm()"
+            [readonly]="!canWrite()"
+            [removable]="true"
+            (remove)="removeExtra($event)"
+          />
+        }
+        @if (canWrite()) {
+          <div class="row g-2 align-items-end mt-1" [formGroup]="newExtra">
+            <div class="col-sm-5">
+              <label for="extraLabel" class="form-label small mb-0">Novo campo</label>
+              <input id="extraLabel" class="form-control form-control-sm" formControlName="label" placeholder="Ex.: Referência" />
+            </div>
+            <div class="col-sm-4">
+              <label for="extraType" class="form-label small mb-0">Tipo</label>
+              <select id="extraType" class="form-select form-select-sm" formControlName="type">
+                @for (t of extraTypes; track t.value) {
+                  <option [value]="t.value">{{ t.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-sm btn-outline-primary w-100" [disabled]="newExtra.invalid" (click)="addExtra()">
+                <i class="fa-solid fa-plus me-1"></i> Adicionar
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (error()) {
+      <div class="col-12"><div class="alert alert-danger py-2 m-0">{{ error() }}</div></div>
+    }
+
+    @if (canWrite()) {
+      <div class="col-12 d-flex flex-wrap align-items-center gap-2 pb-4">
+        <button type="submit" class="btn btn-success" [disabled]="invalid() || loading()">
+          <i class="fa-solid fa-floppy-disk me-1"></i> Salvar
+        </button>
+        @if (saved()) {
+          <span class="text-success small"><i class="fa-solid fa-check"></i> Salvo</span>
+        }
+        @if (post(); as post) {
+          <span class="text-body-secondary small">
+            Atualizado {{ post.updatedAt?.toDate() | date: 'short' }}
+            @if (post.publishedAt) {
+              · publicado {{ post.publishedAt.toDate() | date: 'short' }}
+            }
+          </span>
+          <button type="button" class="btn btn-outline-danger ms-auto" [disabled]="loading()" (click)="remove()">
+            <i class="fa-solid fa-trash me-1"></i> Excluir
+          </button>
+        }
+      </div>
+    }
+  </form>
+}

@@ -1,0 +1,31 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+    <h1 class="h4 mb-4 text-center">Entrar</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input id="email" type="email" class="form-control" formControlName="email" autocomplete="username" />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Senha</label>
+        <input id="password" type="password" class="form-control" formControlName="password" autocomplete="current-password" />
+      </div>
+
+      @if (error()) {
+        <div class="alert alert-danger py-2" role="alert">{{ error() }}</div>
+      }
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="form.invalid || loading()">
+        <i class="fa-solid fa-right-to-bracket me-1"></i> Entrar
+      </button>
+    </form>
+
+    <hr class="my-4" />
+
+    <button type="button" class="btn btn-outline-secondary w-100" [disabled]="loading()" (click)="enterAsGuest()">
+      <i class="fa-solid fa-eye me-1"></i> Entrar como visitante
+    </button>
+    <p class="form-text text-center">Acesso somente leitura ao blog de demonstração.</p>
+  </div>
+</div>

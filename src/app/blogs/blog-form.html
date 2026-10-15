@@ -1,0 +1,63 @@
+<h1 class="h4 mb-3">{{ blogId() ? 'Editar blog' : 'Novo blog' }}</h1>
+
+<form [formGroup]="form" (ngSubmit)="save()" class="row g-3" style="max-width: 48rem">
+  <div class="col-md-7">
+    <label for="name" class="form-label">Nome</label>
+    <input id="name" class="form-control" formControlName="name" (input)="nameChanged()" />
+  </div>
+
+  <div class="col-md-5">
+    <label for="slug" class="form-label">Slug</label>
+    <input id="slug" class="form-control" formControlName="slug" />
+    @if (form.controls.slug.touched && form.controls.slug.errors?.['pattern']) {
+      <div class="form-text text-danger">Use só letras minúsculas, números e hífens.</div>
+    }
+  </div>
+
+  <div class="col-12">
+    <label for="description" class="form-label">Descrição</label>
+    <textarea id="description" class="form-control" rows="2" formControlName="description"></textarea>
+  </div>
+
+  <div class="col-12">
+    <label for="publicUrl" class="form-label">URL pública do blog</label>
+    <input id="publicUrl" type="url" class="form-control" formControlName="publicUrl" placeholder="https://..." />
+    @if (form.controls.publicUrl.touched && form.controls.publicUrl.errors?.['pattern']) {
+      <div class="form-text text-danger">Precisa começar com https://</div>
+    }
+  </div>
+
+  <div class="col-12">
+    <label for="deployUrl" class="form-label">URL do deploy do site</label>
+    <input id="deployUrl" type="url" class="form-control" formControlName="deployUrl" placeholder="https://github.com/usuario/repo/actions/workflows/deploy.yml" />
+    <div class="form-text">
+      Página do workflow que publica o site do blog. Vira o botão "Republicar site", útil quando o site gera as páginas no build.
+    </div>
+    @if (form.controls.deployUrl.touched && form.controls.deployUrl.errors?.['pattern']) {
+      <div class="form-text text-danger">Precisa começar com https://</div>
+    }
+  </div>
+
+  <div class="col-12">
+    <div class="form-check form-switch">
+      <input id="demo" type="checkbox" role="switch" class="form-check-input" formControlName="demo" />
+      <label for="demo" class="form-check-label">Blog de demonstração (visitantes podem ver tudo, sem editar)</label>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="col-12"><div class="alert alert-danger py-2 m-0">{{ error() }}</div></div>
+  }
+
+  <div class="col-12 d-flex gap-2">
+    <button type="submit" class="btn btn-success" [disabled]="form.invalid || loading()">
+      <i class="fa-solid fa-floppy-disk me-1"></i> Salvar
+    </button>
+    <a class="btn btn-outline-secondary" [routerLink]="blogId() ? ['/blogs', blogId()] : ['/']">Cancelar</a>
+    @if (blogId()) {
+      <button type="button" class="btn btn-outline-danger ms-auto" [disabled]="loading()" (click)="remove()">
+        <i class="fa-solid fa-trash me-1"></i> Excluir
+      </button>
+    }
+  </div>
+</form>

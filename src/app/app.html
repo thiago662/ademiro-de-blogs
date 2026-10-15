@@ -1,0 +1,26 @@
+<nav class="navbar sticky-top bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">
+      <img src="assets/logo-ademiro-teste.png" alt="Ademiro de blogs" height="40" class="logo" />
+    </a>
+
+    @if (authService.user(); as user) {
+      <div class="d-flex align-items-center gap-2">
+        <span class="small text-body-secondary">
+          @if (authService.isGuest()) {
+            <span class="badge text-bg-secondary">Visitante</span>
+          } @else {
+            {{ user.email }}
+          }
+        </span>
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </button>
+      </div>
+    }
+  </div>
+</nav>
+
+<main class="container py-3">
+  <router-outlet />
+</main>

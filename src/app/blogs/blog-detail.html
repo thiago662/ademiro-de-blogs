@@ -1,0 +1,103 @@
+@if (blog(); as blog) {
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Blogs</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ blog.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div>
+      <h1 class="h4 mb-1">
+        {{ blog.name }}
+        @if (blog.demo) {
+          <span class="badge text-bg-info align-middle ms-1">demo</span>
+        }
+      </h1>
+      <p class="text-body-secondary small mb-1">
+        /{{ blog.slug }}
+        @if (role(); as role) {
+          · {{ roleLabels[role] }}
+        }
+      </p>
+      @if (blog.publicUrl) {
+        <a [href]="blog.publicUrl" target="_blank" rel="noopener noreferrer" class="small">
+          {{ blog.publicUrl }} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      }
+    </div>
+
+    @if (role()) {
+      <div class="d-flex flex-wrap gap-2">
+        @if (canWrite() && blog.deployUrl) {
+          <a class="btn btn-outline-success" [href]="blog.deployUrl" target="_blank" rel="noopener noreferrer"
+             title="Abre o workflow de deploy para gerar o site com os posts atualizados">
+            <i class="fa-solid fa-rotate me-1"></i> Republicar site
+          </a>
+        }
+        <div class="btn-group">
+          <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'settings']">
+            <i class="fa-solid fa-sliders me-1"></i> Configurações
+          </a>
+          @if (role() === 'admin') {
+            <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'members']">
+              <i class="fa-solid fa-users me-1"></i> Membros
+            </a>
+            <a class="btn btn-outline-secondary" [routerLink]="['/blogs', blog.id, 'edit']">
+              <i class="fa-solid fa-pen me-1"></i> Editar
+            </a>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (blog.description) {
+    <p>{{ blog.description }}</p>
+  }
+
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <h2 class="h5 m-0 me-auto">Posts</h2>
+    <select
+      class="form-select form-select-sm w-auto"
+      aria-label="Filtrar por status"
+      [value]="statusFilter()"
+      (change)="statusFilter.set($any($event.target).value)"
+    >
+      <option value="">Todos</option>
+      <option value="draft">Rascunhos</option>
+      <option value="published">Publicados</option>
+      <option value="archived">Arquivados</option>
+    </select>
+    @if (canWrite()) {
+      <a class="btn btn-primary btn-sm" [routerLink]="['/blogs', blog.id, 'posts', 'new']">
+        <i class="fa-solid fa-plus me-1"></i> Novo post
+      </a>
+    }
+  </div>
+
+  @if (posts()) {
+    <div class="list-group">
+      @for (post of filteredPosts(); track post.id) {
+        <a class="list-group-item list-group-item-action d-flex gap-3 align-items-center" [routerLink]="['/blogs', blog.id, 'posts', post.id]">
+          <div class="flex-grow-1 text-truncate">
+            <div class="fw-semibold text-truncate">{{ post.title }}</div>
+            @if (post.subtitle) {
+              <div class="small text-body-secondary text-truncate">{{ post.subtitle }}</div>
+            }
+          </div>
+          <span class="badge {{ statusLabels[post.status].css }}">{{ statusLabels[post.status].label }}</span>
+          <small class="text-body-secondary text-nowrap d-none d-sm-inline">{{ post.updatedAt?.toDate() | date: 'short' }}</small>
+        </a>
+      } @empty {
+        <div class="border rounded p-4 text-center text-body-secondary">Nenhum post{{ statusFilter() ? ' com esse status' : '' }}.</div>
+      }
+    </div>
+  } @else {
+    <div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Carregando</span></div>
+  }
+} @else if (notFound()) {
+  <div class="alert alert-warning">Blog não encontrado. <a routerLink="/">Voltar</a></div>
+} @else {
+  <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando</span></div>
+}
