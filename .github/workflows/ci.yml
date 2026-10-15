@@ -9,8 +9,6 @@ permissions:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    env:
-      USE_EMULATORS: 'true'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -18,6 +16,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # PRs (inclusive de forks) não recebem secrets: o exemplo já vem em modo emulador.
+      - run: cp src/environments/firebase.config.example.ts src/environments/firebase.config.ts
       - run: npm run build
       - run: npm test -- --watch=false
 

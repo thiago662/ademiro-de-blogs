@@ -24,15 +24,20 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      # Config do Firebase vem de Settings > Secrets and variables > Actions > Secrets.
-      # Não é segredo (vai no JS publicado), mas como secret fica mascarada nos logs públicos.
-      - run: npm run build -- --base-href "/${{ github.event.repository.name }}/"
+      # Secret FIREBASE_CONFIG = o objeto { apiKey: ..., ... } colado do Console (JSON ou literal JS).
+      # Não é segredo (vai no JS publicado), mas como secret fica mascarado nos logs públicos.
+      - name: Gerar firebase.config.ts
         env:
-          USE_EMULATORS: 'false'
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
+        run: >-
+          node -e "
+          const c = new Function('return ' + (process.env.FIREBASE_CONFIG || 'null'))();
+          if (!c || !c.apiKey || !c.projectId || !c.authDomain || !c.appId)
+            throw new Error('Secret FIREBASE_CONFIG ausente ou incompleto (ver README)');
+          require('fs').writeFileSync('src/environments/firebase.config.ts',
+            'export const useEmulators = false;\nexport const firebaseConfig = ' + JSON.stringify(c) + ';\n');
+          "
+      - run: npm run build -- --base-href "/${{ github.event.repository.name }}/"
       # Fallback de rotas da SPA: GitHub Pages serve 404.html em rotas desconhecidas
       - run: cp dist/ademiro-de-blogs/browser/index.html dist/ademiro-de-blogs/browser/404.html
       - uses: actions/configure-pages@v6
