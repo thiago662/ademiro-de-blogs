@@ -5,6 +5,14 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # Majors do Angular (e do TypeScript, que o Angular fixa) vão por `ng update`, que roda as migrações.
+    ignore:
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular-devkit/*'
+        update-types: ['version-update:semver-major']
     groups:
       angular:
         patterns: ['@angular/*', '@angular-devkit/*', 'typescript']
