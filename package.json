@@ -41,7 +41,7 @@
     "@firebase/rules-unit-testing": "^6.0.0",
     "firebase-tools": "^15.33.0",
     "jsdom": "^30.0.0",
-    "prettier": "^3.8.1",
+    "prettier": "^3.9.10",
     "typescript": "~6.0.2",
     "vitest": "^5.0.0"
   }
