@@ -24,14 +24,15 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      # Config do Firebase vem de Settings > Secrets and variables > Actions > Variables
+      # Config do Firebase vem de Settings > Secrets and variables > Actions > Secrets.
+      # Não é segredo (vai no JS publicado), mas como secret fica mascarada nos logs públicos.
       - run: npm run build -- --base-href "/${{ github.event.repository.name }}/"
         env:
           USE_EMULATORS: 'false'
-          FIREBASE_API_KEY: ${{ vars.FIREBASE_API_KEY }}
-          FIREBASE_AUTH_DOMAIN: ${{ vars.FIREBASE_AUTH_DOMAIN }}
-          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
-          FIREBASE_APP_ID: ${{ vars.FIREBASE_APP_ID }}
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
       # Fallback de rotas da SPA: GitHub Pages serve 404.html em rotas desconhecidas
       - run: cp dist/ademiro-de-blogs/browser/index.html dist/ademiro-de-blogs/browser/404.html
       - uses: actions/configure-pages@v6

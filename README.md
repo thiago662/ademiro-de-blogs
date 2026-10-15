@@ -96,7 +96,7 @@ Repita sempre que `firestore.rules` ou `firestore.indexes.json` mudarem.
 ### 3. GitHub Pages
 
 1. **Settings → Pages → Source:** `GitHub Actions`.
-2. **Settings → Secrets and variables → Actions → Variables**, com os valores do `firebaseConfig`:
+2. **Settings → Secrets and variables → Actions → Secrets → New repository secret**, com os valores do `firebaseConfig` (não são segredos — vão no JS publicado —, mas como *secrets* ficam mascarados nos logs públicos do Actions; forks não herdam esses valores):
 
    | Variável | Campo do `firebaseConfig` |
    |---|---|

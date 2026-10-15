@@ -136,7 +136,7 @@ npm start                       # USE_EMULATORS=true conecta no emulador
 
 **Fluxo de deploy (GitHub Actions, push em `master`):**
 1. `npm ci`
-2. Gera environment a partir de **Repository Variables** (`FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_APP_ID`, …)
+2. Gera environment a partir de **Repository Secrets** (`FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_APP_ID`, …)
 3. `ng build --base-href /<repo>/`
 4. Copia `index.html` → `404.html` (fallback de rotas SPA)
 5. `actions/upload-pages-artifact` + `actions/deploy-pages`
