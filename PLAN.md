@@ -122,21 +122,22 @@ Validações de escrita em `posts`: campos permitidos (`keys().hasOnly`), tipos,
 
 ## 5. Configuração e deploy (sem dados pessoais no repo)
 
-**Arquivos commitados:** `.env.example`, `firebase.json`, `firestore.rules`, `firestore.indexes.json`, `scripts/write-env.mjs`, seed fictício do emulador.
+**Arquivos commitados:** `src/environments/environment.ts` (importa a config pessoal), `src/environments/firebase.config.example.ts`, `firebase.json`, `firestore.rules`, `firestore.indexes.json`, seed fictício do emulador.
 
-**Arquivos ignorados:** `.env`, `src/environments/environment*.ts` (gerados), `.firebaserc` (contém project ID), `.private/`.
+**Arquivos ignorados:** `src/environments/firebase.config.ts` (config pessoal: `useEmulators` + `firebaseConfig`), `.firebaserc` (contém project ID), `.private/`.
+
+*(Modelo do scrum-truco-app. Substituiu a versão inicial com `.env` + script gerador, que confundia por recriar o `environment.ts` a cada `npm start`.)*
 
 **Fluxo local:**
 ```
-cp .env.example .env            # preencher com o firebaseConfig
-npm run env                     # node --env-file=.env scripts/write-env.mjs
+cp src/environments/firebase.config.example.ts src/environments/firebase.config.ts
 npm run emulators               # firebase emulators:start --import=./emulator-seed
-npm start                       # USE_EMULATORS=true conecta no emulador
+npm start                       # useEmulators = true conecta no emulador
 ```
 
 **Fluxo de deploy (GitHub Actions, push em `master`):**
 1. `npm ci`
-2. Gera environment a partir de **Repository Secrets** (`FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_APP_ID`, …)
+2. Gera `firebase.config.ts` a partir do secret **`FIREBASE_CONFIG`** (o objeto `{ apiKey, ... }` colado do console), validando os campos obrigatórios. PRs usam o exemplo (modo emulador).
 3. `ng build --base-href /<repo>/`
 4. Copia `index.html` → `404.html` (fallback de rotas SPA)
 5. `actions/upload-pages-artifact` + `actions/deploy-pages`
@@ -151,7 +152,7 @@ Cada item = 1 PR pequeno. Critério de pronto ao final de cada fase.
 
 ### Fase 0 — Fundação
 - **PR 1 · Projeto novo:** remover app antigo, `ng new` na última versão estável (standalone, SCSS), Bootstrap + Font Awesome, logo/assets antigos, estrutura de pastas. Remove `docs/`, `@kolkov/angular-editor`, mock de `sessionStorage`.
-- **PR 2 · Config + Firebase local:** `.env.example`, `scripts/write-env.mjs`, environments ignorados, `firebase.json` com emuladores (Auth, Firestore, UI), `firestore.rules` deny-all, `firestore.indexes.json`, `core/firebase.ts` (init + conexão condicional ao emulador), seed fictício.
+- **PR 2 · Config + Firebase local:** config pessoal ignorada pelo git (hoje `firebase.config.ts`; originalmente `.env` + script), `firebase.json` com emuladores (Auth, Firestore, UI), `firestore.rules` deny-all, `firestore.indexes.json`, `core/firebase.ts` (init + conexão condicional ao emulador), seed fictício.
 - **PR 3 · CI/CD:** workflow de deploy no Pages + workflow de CI (build) em PR.
 
 ✅ App vazio sobe local apontando pro emulador e publica no Pages via Action, sem nenhum dado pessoal no repo.

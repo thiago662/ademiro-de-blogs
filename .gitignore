@@ -42,9 +42,8 @@ __screenshots__/
 # Local notes (never commit)
 /.private
 
-# Local config (gerado/pessoal, nunca commitar)
-.env
-/src/environments
+# Config pessoal do Firebase (cada um usa o seu; ver firebase.config.example.ts)
+/src/environments/firebase.config.ts
 .firebaserc
 firebase-debug*.log
 firestore-debug.log

@@ -40,7 +40,7 @@ Não precisa de conta no Firebase: o desenvolvimento usa o **emulador** com dado
 git clone https://github.com/thiago662/ademiro-de-blogs.git
 cd ademiro-de-blogs
 npm install
-cp .env.example .env          # já vem com USE_EMULATORS=true
+cp src/environments/firebase.config.example.ts src/environments/firebase.config.ts   # já vem com useEmulators = true
 
 npm run emulators             # terminal 1 — Auth + Firestore, UI em http://127.0.0.1:4000
 npm start                     # terminal 2 — app em http://localhost:4200
@@ -66,7 +66,7 @@ npm start                     # terminal 2 — app em http://localhost:4200
 | `npm run emulators` | emulador com o seed de `emulator-seed/` |
 | `npm run emulators:export` | salva o estado atual do emulador como novo seed |
 
-> A configuração do Firebase é gerada em `src/environments/environment.ts` a partir do `.env` (ou das variáveis do GitHub no deploy). Esse arquivo é ignorado pelo git — não edite à mão.
+> **Configuração:** `src/environments/firebase.config.ts` é o seu arquivo pessoal (ignorado pelo git). Com `useEmulators = true` o app usa o emulador; com `false`, o Firebase real dos valores em `firebaseConfig`. O `environment.ts` padrão do Angular só importa esse arquivo.
 
 ---
 
@@ -96,18 +96,24 @@ Repita sempre que `firestore.rules` ou `firestore.indexes.json` mudarem.
 ### 3. GitHub Pages
 
 1. **Settings → Pages → Source:** `GitHub Actions`.
-2. **Settings → Secrets and variables → Actions → Secrets → New repository secret**, com os valores do `firebaseConfig` (não são segredos — vão no JS publicado —, mas como *secrets* ficam mascarados nos logs públicos do Actions; forks não herdam esses valores):
+2. **Settings → Secrets and variables → Actions → Secrets → New repository secret** chamado **`FIREBASE_CONFIG`**, com o objeto copiado do console — só o `{ ... }`, sem o `const firebaseConfig =`:
 
-   | Variável | Campo do `firebaseConfig` |
-   |---|---|
-   | `FIREBASE_API_KEY` | `apiKey` |
-   | `FIREBASE_AUTH_DOMAIN` | `authDomain` |
-   | `FIREBASE_PROJECT_ID` | `projectId` |
-   | `FIREBASE_APP_ID` | `appId` |
+   ```js
+   {
+     apiKey: "...",
+     authDomain: "...",
+     projectId: "...",
+     storageBucket: "...",
+     messagingSenderId: "...",
+     appId: "..."
+   }
+   ```
+
+   Esses valores não são segredos (vão no JS publicado), mas como *secret* ficam mascarados nos logs públicos do Actions. Forks não herdam secrets: cada um usa o próprio.
 
 3. Faça push na `master`. O workflow `Deploy GitHub Pages` publica em `https://<seu-usuario>.github.io/<nome-do-repo>/`.
 
-Para rodar local contra o projeto real em vez do emulador, preencha o `.env` com os mesmos valores e `USE_EMULATORS=false`.
+Para rodar local contra o projeto real em vez do emulador, preencha `firebaseConfig` no seu `src/environments/firebase.config.ts` e troque para `useEmulators = false` — o `npm start` recarrega sozinho.
 
 ---
 
@@ -189,7 +195,7 @@ const [post] = (await getDocs(query(
 - O `firebaseConfig` web **não é segredo** — ele vai no JavaScript do navegador. A proteção real são as **Security Rules** (`firestore.rules`): tudo é negado por padrão e cada acesso exige admin, membro do blog ou visitante em blog demo. Estar logado nunca basta.
 - As rules são cobertas por testes (`tests/rules/`) que rodam no CI a cada pull request.
 - **CSP** estrita em `src/index.html`: sem scripts inline, imagens apenas `https`, conexões apenas com o Firebase.
-- Nenhum dado pessoal no repositório: `.env`, `src/environments/` e `.firebaserc` são ignorados.
+- Nenhum dado pessoal no repositório: `src/environments/firebase.config.ts` e `.firebaserc` são ignorados.
 
 **Checklist do console antes de publicar:**
 - [ ] Rules e índices publicados (`firebase deploy --only firestore:rules,firestore:indexes`).
