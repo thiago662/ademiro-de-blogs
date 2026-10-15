@@ -16,7 +16,7 @@ Gerenciador de conteúdo para múltiplos blogs, open source, publicado no GitHub
 
 **Desvios do plano original:**
 - Fase 2: admin não vira "owner" do blog ao criar — admin já tem acesso global; papéis por blog são só `editor` e `viewer`.
-- Fase 5: incluído aviso de alterações não salvas (guard + `beforeunload`) e contorno de bug do Milkdown 7.22.2 com imagem sem título.
+- Fase 5: incluído aviso de alterações não salvas (guard + `beforeunload`) e contorno de bug do Milkdown 7.22.2 com imagem sem título (removido ao atualizar para 7.22.3, que corrigiu o bug).
 - Testes de rules usam o projeto `demo-rules-test`, isolado do emulador de desenvolvimento.
 
 ---

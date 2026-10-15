@@ -9,23 +9,6 @@ import {
   model,
 } from '@angular/core';
 import { Crepe } from '@milkdown/crepe';
-import { $remark } from '@milkdown/kit/utils';
-
-interface MdNode {
-  type: string;
-  title?: string | null;
-  children?: MdNode[];
-}
-
-// ponytail: contorna bug do Milkdown 7.22.2 — `![alt](url)` sem título vira caption null e o
-// image-block lança RangeError. Remover quando o Milkdown corrigir.
-const imageTitleFix = $remark('imageTitleFix', () => () => (tree: MdNode) => {
-  const visit = (node: MdNode) => {
-    if (node.type === 'image' || node.type === 'image-block') node.title ??= '';
-    node.children?.forEach(visit);
-  };
-  visit(tree);
-});
 
 /** Editor WYSIWYG que lê e grava Markdown. O valor inicial é lido uma única vez, na criação. */
 @Component({
@@ -64,7 +47,6 @@ export class MarkdownEditor implements OnDestroy {
           },
         },
       });
-      crepe.editor.use(imageTitleFix);
       // Só propaga depois que o usuário interagiu: o Milkdown também altera o doc sozinho
       // (ex.: image-block grava a proporção quando a imagem carrega), e isso não é edição.
       crepe.on((listener) =>
