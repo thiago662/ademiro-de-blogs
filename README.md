@@ -16,7 +16,9 @@
 - **Campos customizados** por blog — no blog (ex.: bio do autor) ou em todo post (ex.: nível, stack) — e **campos avulsos** em um post específico.
 - **Login e papéis:** admin, editor, somente leitura e **visitante** (acesso de demonstração sem senha).
 - **Tema claro e escuro:** segue o sistema na primeira visita e lembra a escolha do usuário.
-- **Segurança no banco:** Security Rules deny-by-default com 40 testes automatizados, CSP estrita, sem dados pessoais no repositório.
+- **Segurança no banco:** Security Rules deny-by-default com 42 testes automatizados, CSP estrita, sem dados pessoais no repositório.
+
+**Exemplos em uso:** os sites [Brain Logs](https://thiago662.github.io/brain-logs-app/) ([código](https://github.com/thiago662/brain-logs-app)) e [Blog de Notas](https://thiago662.github.io/blog-de-notas-app/) ([código](https://github.com/thiago662/blog-de-notas-app)) leem os posts publicados neste painel.
 
 ## 🛠️ Tecnologias
 
@@ -39,7 +41,7 @@ Não precisa de conta no Firebase: o desenvolvimento usa o **emulador** com dado
 **Requisitos:** Node.js **24.15+** e Java **21+** (para o emulador).
 
 ```bash
-git clone https://github.com/thiago662/ademiro-de-blogs.git
+git clone https://github.com/<seu-usuario>/ademiro-de-blogs.git   # o seu fork (ou este repositório, só para testar)
 cd ademiro-de-blogs
 npm install
 cp src/environments/firebase.config.example.ts src/environments/firebase.config.ts   # já vem com useEmulators = true
@@ -97,6 +99,7 @@ Repita sempre que `firestore.rules` ou `firestore.indexes.json` mudarem.
 
 ### 3. GitHub Pages
 
+1. **Aba Actions** do seu fork: clique em **"I understand my workflows, go ahead and enable them"**. Forks vêm com o Actions desligado e, sem isso, o deploy não roda.
 1. **Settings → Pages → Source:** `GitHub Actions`.
 2. **Settings → Secrets and variables → Actions → Secrets → New repository secret** chamado **`FIREBASE_CONFIG`**, com o objeto copiado do console — só o `{ ... }`, sem o `const firebaseConfig =`:
 
@@ -192,6 +195,21 @@ const [post] = (await getDocs(query(
 
 ---
 
+## 🎨 Personalizando
+
+| O que mudar | Onde |
+|---|---|
+| Nome, descrição e textos de compartilhamento | `src/index.html` (título, `description`, `og:*`) e `src/app/login/login.html` |
+| Cores (tema claro e escuro) | variáveis `--ad-*` no topo de `src/styles.scss` |
+| Logo | `src/app/core/logo-paths.ts` (caminhos SVG do símbolo e do texto) e `public/assets/logo.svg` |
+| Favicon e ícone de app | `public/favicon.svg`, `public/favicon.ico`, `public/apple-touch-icon.png` |
+| Imagem do card de compartilhamento | `public/og-image.png` (1200×630) |
+| Fontes | `angular.json` (pacotes `@fontsource`) e `--bs-body-font-family` em `src/styles.scss` |
+
+Fontes externas (ex.: Google Fonts) exigem liberar o domínio na CSP de `src/index.html`; por isso as fontes vêm de pacotes `@fontsource`, servidas pelo próprio site.
+
+---
+
 ## 🔒 Segurança
 
 - O `firebaseConfig` web **não é segredo** — ele vai no JavaScript do navegador. A proteção real são as **Security Rules** (`firestore.rules`): tudo é negado por padrão e cada acesso exige admin, membro do blog ou visitante em blog demo. Estar logado nunca basta.
@@ -214,6 +232,12 @@ const [post] = (await getDocs(query(
 - Fora do MVP: histórico de versões, agendamento de publicação, canais de distribuição (LinkedIn, Instagram) e geração com IA.
 
 Plano completo em [PLAN.md](PLAN.md).
+
+---
+
+## 📄 Licença
+
+Este projeto ainda não tem uma licença definida. O código pode ser visto e forkado aqui no GitHub; para outros usos, entre em contato.
 
 ---
 
