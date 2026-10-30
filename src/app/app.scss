@@ -1,3 +1,118 @@
-.logo {
-  filter: invert(16%) sepia(99%) saturate(4794%) hue-rotate(212deg) brightness(104%) contrast(101%);
+.ad-header {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  background: var(--ad-surface);
+  border-bottom: 1px solid var(--ad-border);
+}
+
+.ad-header-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+.ad-nav {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 0.25rem;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--ad-muted);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--ad-text);
+    }
+
+    &.active {
+      background: var(--ad-primary-soft);
+      color: var(--ad-primary-text);
+    }
+  }
+}
+
+.ad-user {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  border: 1px solid var(--ad-border);
+  border-radius: 999px;
+  min-width: 0;
+}
+
+.ad-avatar {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  border-radius: 999px;
+  background: var(--ad-primary);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-user-name {
+  font-size: 0.8125rem;
+  color: var(--ad-muted);
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ad-logout {
+  min-height: 2.75rem;
+  color: var(--ad-muted);
+  font-weight: 600;
+
+  &:hover {
+    color: var(--ad-text);
+  }
+}
+
+.ad-main {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+@media (max-width: 576px) {
+  .ad-header-inner {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+  }
+
+  /* o logo já leva para a lista de blogs */
+  .ad-nav {
+    display: none;
+  }
+
+  .ad-user-name {
+    display: none;
+  }
+
+  .ad-user {
+    padding-right: 0.25rem;
+  }
+
+  .ad-main {
+    padding: 1.25rem 1rem 3rem;
+  }
 }

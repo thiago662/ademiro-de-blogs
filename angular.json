@@ -36,6 +36,9 @@
               }
             ],
             "styles": [
+              "node_modules/@fontsource-variable/manrope/index.css",
+              "node_modules/@fontsource/jetbrains-mono/400.css",
+              "node_modules/@fontsource/jetbrains-mono/500.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "node_modules/@milkdown/crepe/lib/theme/common/style.css",

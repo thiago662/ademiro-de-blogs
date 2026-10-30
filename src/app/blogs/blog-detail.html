@@ -11,7 +11,7 @@
       <h1 class="h4 mb-1">
         {{ blog.name }}
         @if (blog.demo) {
-          <span class="badge text-bg-info align-middle ms-1">demo</span>
+          <span class="ad-badge-info align-middle ms-1">demo</span>
         }
       </h1>
       <p class="text-body-secondary small mb-1">
@@ -86,7 +86,7 @@
               <div class="small text-body-secondary text-truncate">{{ post.subtitle }}</div>
             }
           </div>
-          <span class="badge {{ statusLabels[post.status].css }}">{{ statusLabels[post.status].label }}</span>
+          <span class="ad-status" [attr.data-status]="post.status">{{ statusLabels[post.status].label }}</span>
           <small class="text-body-secondary text-nowrap d-none d-sm-inline">{{ post.updatedAt?.toDate() | date: 'short' }}</small>
         </a>
       } @empty {

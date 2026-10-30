@@ -15,6 +15,7 @@
 - **Posts** com título, subtítulo, slug, resumo, capa, tags e status (rascunho, publicado, arquivado).
 - **Campos customizados** por blog — no blog (ex.: bio do autor) ou em todo post (ex.: nível, stack) — e **campos avulsos** em um post específico.
 - **Login e papéis:** admin, editor, somente leitura e **visitante** (acesso de demonstração sem senha).
+- **Tema claro e escuro:** segue o sistema na primeira visita e lembra a escolha do usuário.
 - **Segurança no banco:** Security Rules deny-by-default com 40 testes automatizados, CSP estrita, sem dados pessoais no repositório.
 
 ## 🛠️ Tecnologias
@@ -24,7 +25,8 @@
 | [Angular 22](https://angular.dev/) | standalone, signals, zoneless |
 | [Firebase](https://firebase.google.com/) | Authentication + Cloud Firestore (plano Spark) |
 | [Milkdown Crepe](https://milkdown.dev/) | editor WYSIWYG que salva Markdown |
-| [Bootstrap 5](https://getbootstrap.com/) + [Font Awesome 7](https://fontawesome.com/) | interface |
+| [Bootstrap 5](https://getbootstrap.com/) + [Font Awesome 7](https://fontawesome.com/) | interface (tema claro/escuro via `data-bs-theme`) |
+| Manrope + JetBrains Mono ([Fontsource](https://fontsource.org/)) | tipografia, hospedada no próprio site (sem Google Fonts, por causa da CSP) |
 | Firebase Emulator Suite | desenvolvimento local e testes das rules |
 | GitHub Actions + Pages | CI e deploy |
 

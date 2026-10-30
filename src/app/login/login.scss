@@ -1,0 +1,86 @@
+.ad-login {
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ad-login-brand {
+  flex: 1 1 26rem;
+  min-width: 0;
+  padding: 3.5rem;
+  background: #1f4fff;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.ad-login-pitch {
+  max-width: 28rem;
+
+  h1 {
+    margin: 0 0 1rem;
+    color: #fff;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: #dce4ff;
+  }
+}
+
+.ad-login-foot {
+  font-family: var(--bs-font-monospace);
+  font-size: 0.8125rem;
+  color: #e1e8ff;
+}
+
+.ad-login-form-wrap {
+  flex: 1 1 26rem;
+  min-width: 0;
+  padding: 3.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-login-form {
+  width: 100%;
+  max-width: 23.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.ad-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ad-muted);
+  font-size: 0.8125rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ad-border);
+  }
+}
+
+@media (max-width: 576px) {
+  .ad-login-brand {
+    padding: 2rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .ad-login-foot {
+    display: none;
+  }
+}

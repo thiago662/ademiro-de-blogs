@@ -1,31 +1,41 @@
-<div class="row justify-content-center mt-5">
-  <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-    <h1 class="h4 mb-4 text-center">Entrar</h1>
+<div class="ad-login">
+  <section class="ad-login-brand">
+    <app-logo [height]="52" [mono]="true" />
+    <div class="ad-login-pitch">
+      <h1>Escreva uma vez. Publique em todos os seus blogs.</h1>
+      <p>Posts em Markdown, campos próprios por blog e sites estáticos atualizados a partir de um só painel.</p>
+    </div>
+    <span class="ad-login-foot">Ademiro de Blogs</span>
+  </section>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <div class="mb-3">
-        <label for="email" class="form-label">E-mail</label>
-        <input id="email" type="email" class="form-control" formControlName="email" autocomplete="username" />
+  <section class="ad-login-form-wrap">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="ad-login-form">
+      <div>
+        <h2 class="h3 mb-1">Entrar</h2>
+        <p class="text-body-secondary mb-0">Use a conta criada no Firebase do projeto.</p>
       </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Senha</label>
-        <input id="password" type="password" class="form-control" formControlName="password" autocomplete="current-password" />
+
+      <div>
+        <label for="email" class="form-label fw-semibold">E-mail</label>
+        <input id="email" type="email" class="form-control form-control-lg" formControlName="email" autocomplete="username" />
+      </div>
+      <div>
+        <label for="password" class="form-label fw-semibold">Senha</label>
+        <input id="password" type="password" class="form-control form-control-lg" formControlName="password" autocomplete="current-password" />
       </div>
 
       @if (error()) {
-        <div class="alert alert-danger py-2" role="alert">{{ error() }}</div>
+        <div class="alert alert-danger py-2 mb-0" role="alert">{{ error() }}</div>
       }
 
-      <button type="submit" class="btn btn-primary w-100" [disabled]="form.invalid || loading()">
-        <i class="fa-solid fa-right-to-bracket me-1"></i> Entrar
+      <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="form.invalid || loading()">Entrar</button>
+
+      <div class="ad-divider"><span>ou</span></div>
+
+      <button type="button" class="btn btn-outline-secondary btn-lg w-100" [disabled]="loading()" (click)="enterAsGuest()">
+        <i class="fa-solid fa-eye me-2" aria-hidden="true"></i>Entrar como visitante
       </button>
+      <p class="form-text text-center mb-0">Visitantes veem o blog de demonstração, sem editar.</p>
     </form>
-
-    <hr class="my-4" />
-
-    <button type="button" class="btn btn-outline-secondary w-100" [disabled]="loading()" (click)="enterAsGuest()">
-      <i class="fa-solid fa-eye me-1"></i> Entrar como visitante
-    </button>
-    <p class="form-text text-center">Acesso somente leitura ao blog de demonstração.</p>
-  </div>
+  </section>
 </div>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <title>Ademiro de Blogs</title>
@@ -23,7 +23,28 @@
     form-action 'self'
   ">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Painel administrativo: fora dos buscadores; o card de compartilhamento continua funcionando. -->
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Gerenciador de conteúdo para vários blogs: Markdown, campos por blog e sites estáticos no GitHub Pages.">
+  <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)">
+
+  <!-- Open Graph / Twitter. __SITE_URL__ é trocado pela URL do Pages no deploy (ver deploy.yml). -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ademiro de Blogs">
+  <meta property="og:title" content="Ademiro de Blogs">
+  <meta property="og:description" content="Gerenciador de conteúdo para vários blogs: Markdown, campos por blog e sites estáticos no GitHub Pages.">
+  <meta property="og:url" content="__SITE_URL__/">
+  <meta property="og:image" content="__SITE_URL__/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo do Ademiro de Blogs e o texto: gerenciador de conteúdo para vários blogs.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script src="theme-init.js"></script>
 </head>
 <body>
   <app-root></app-root>

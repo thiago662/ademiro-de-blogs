@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { Blog, BlogsService } from '../core/blogs.service';
@@ -7,6 +7,7 @@ import { Blog, BlogsService } from '../core/blogs.service';
   selector: 'app-blog-list',
   imports: [RouterLink],
   templateUrl: './blog-list.html',
+  styleUrl: './blog-list.scss',
 })
 export class BlogList implements OnInit {
   private readonly blogsService = inject(BlogsService);
@@ -14,6 +15,13 @@ export class BlogList implements OnInit {
 
   protected readonly blogs = signal<Blog[] | null>(null);
   protected readonly error = signal('');
+  protected readonly search = signal('');
+
+  protected readonly filtered = computed(() => {
+    const term = this.search().trim().toLowerCase();
+    const blogs = this.blogs() ?? [];
+    return term ? blogs.filter((b) => b.name.toLowerCase().includes(term) || b.slug.includes(term)) : blogs;
+  });
 
   async ngOnInit() {
     try {

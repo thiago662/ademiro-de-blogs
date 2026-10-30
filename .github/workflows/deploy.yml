@@ -38,9 +38,12 @@ jobs:
             'export const useEmulators = false;\nexport const firebaseConfig = ' + JSON.stringify(c) + ';\n');
           "
       - run: npm run build -- --base-href "/${{ github.event.repository.name }}/"
+      - id: pages
+        uses: actions/configure-pages@v6
+      # Meta tags Open Graph precisam de URL absoluta: usa a URL real do Pages (funciona em forks e domínio próprio).
+      - run: sed -i "s#__SITE_URL__#${{ steps.pages.outputs.base_url }}#g" dist/ademiro-de-blogs/browser/index.html
       # Fallback de rotas da SPA: GitHub Pages serve 404.html em rotas desconhecidas
       - run: cp dist/ademiro-de-blogs/browser/index.html dist/ademiro-de-blogs/browser/404.html
-      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist/ademiro-de-blogs/browser

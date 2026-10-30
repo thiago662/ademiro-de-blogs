@@ -10,10 +10,11 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  it('should render the navbar logo', async () => {
+  it('sem usuário logado não mostra a barra superior', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('nav img')?.getAttribute('alt')).toBe('Ademiro de blogs');
+    expect(compiled.querySelector('header')).toBeNull();
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
   });
 });

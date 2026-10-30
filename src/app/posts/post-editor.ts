@@ -26,6 +26,7 @@ const HTTPS = /^(https:\/\/.+)?$/;
   selector: 'app-post-editor',
   imports: [ReactiveFormsModule, RouterLink, DatePipe, MarkdownEditor, CustomFields],
   templateUrl: './post-editor.html',
+  styleUrl: './post-editor.scss',
   // Ternário, não &&: handler que retorna false faz o Angular chamar preventDefault().
   host: { '(window:beforeunload)': 'hasUnsavedChanges() ? $event.preventDefault() : null' },
 })
@@ -55,6 +56,11 @@ export class PostEditor implements OnInit, HasUnsavedChanges {
   protected readonly extraDefs = signal<FieldDef[]>([]);
   protected readonly extrasForm = signal<FieldsGroup>(buildFieldsGroup([], {}));
   protected readonly extraTypes = fieldTypes.filter((t) => t.value !== 'select');
+  protected readonly statuses: { value: PostStatus; label: string }[] = [
+    { value: 'draft', label: 'Rascunho' },
+    { value: 'published', label: 'Publicado' },
+    { value: 'archived', label: 'Arquivado' },
+  ];
   protected readonly newExtra = new FormGroup({
     label: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
     type: new FormControl<FieldType>('text', { nonNullable: true }),

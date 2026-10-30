@@ -1,26 +1,38 @@
-<nav class="navbar sticky-top bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/">
-      <img src="assets/logo-ademiro-teste.png" alt="Ademiro de blogs" height="40" class="logo" />
-    </a>
-
-    @if (authService.user(); as user) {
+@if (authService.user(); as user) {
+  <header class="ad-header">
+    <div class="ad-header-inner">
+      <a routerLink="/" class="d-flex align-items-center" aria-label="Ademiro, início">
+        <app-logo [height]="30" />
+      </a>
+      <nav aria-label="Principal" class="ad-nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">Blogs</a>
+      </nav>
       <div class="d-flex align-items-center gap-2">
-        <span class="small text-body-secondary">
-          @if (authService.isGuest()) {
-            <span class="badge text-bg-secondary">Visitante</span>
-          } @else {
-            {{ user.email }}
-          }
-        </span>
-        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="logout()">
-          <i class="fa-solid fa-right-from-bracket"></i> Sair
+        <button
+          type="button"
+          class="ad-icon-btn"
+          [attr.aria-label]="theme.theme() === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'"
+          [title]="theme.theme() === 'dark' ? 'Tema claro' : 'Tema escuro'"
+          (click)="theme.toggle()"
+        >
+          <i class="fa-solid" [class.fa-sun]="theme.theme() === 'dark'" [class.fa-moon]="theme.theme() !== 'dark'" aria-hidden="true"></i>
         </button>
+        <div class="ad-user">
+          <span class="ad-avatar" aria-hidden="true">{{ initial(user.email) }}</span>
+          @if (authService.isGuest()) {
+            <span class="ad-user-name">Visitante</span>
+          } @else {
+            <span class="ad-user-name">{{ user.email }}</span>
+          }
+        </div>
+        <button type="button" class="btn btn-link text-decoration-none ad-logout" (click)="logout()">Sair</button>
       </div>
-    }
-  </div>
-</nav>
+    </div>
+  </header>
 
-<main class="container py-3">
+  <main class="ad-main">
+    <router-outlet />
+  </main>
+} @else {
   <router-outlet />
-</main>
+}

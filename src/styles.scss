@@ -1,4 +1,273 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+ * Identidade Ademiro: tokens próprios (--ad-*) ligados às variáveis do Bootstrap.
+ * O tema vem de data-bs-theme no <html> (claro/escuro), definido por public/theme-init.js
+ * antes do Angular carregar e alternado pelo ThemeService.
+ */
+
+:root,
+[data-bs-theme='light'] {
+  --ad-bg: #f6f7f9;
+  --ad-surface: #ffffff;
+  --ad-border: #e3e6eb;
+  --ad-text: #0f172a;
+  --ad-body: #334155;
+  --ad-muted: #5b6474;
+  --ad-primary: #1f4fff;
+  --ad-primary-hover: #1438cc;
+  --ad-primary-text: #1f4fff;
+  --ad-primary-soft: #eef2ff;
+  --ad-logo-mark: #1f4fff;
+  --ad-logo-text: #1f4fff;
+  --ad-ok-soft: #dcfce7;
+  --ad-ok-text: #14532d;
+  --ad-warn-soft: #fef3c7;
+  --ad-warn-text: #78350f;
+  --ad-neutral-soft: #e5e7eb;
+  --ad-neutral-text: #374151;
+  --ad-info-soft: #e0f2fe;
+  --ad-info-text: #075985;
+  --ad-focus: rgba(31, 79, 255, 0.35);
+}
+
+[data-bs-theme='dark'] {
+  --ad-bg: #0b0d12;
+  --ad-surface: #12151c;
+  --ad-border: #232835;
+  --ad-text: #e8ebf2;
+  --ad-body: #c9cfdb;
+  --ad-muted: #9aa3b5;
+  --ad-primary: #3d63ff;
+  --ad-primary-hover: #5a7bff;
+  --ad-primary-text: #8fa6ff;
+  --ad-primary-soft: #1a2142;
+  --ad-logo-mark: #7a95ff;
+  --ad-logo-text: #e8ebf2;
+  --ad-ok-soft: #12301f;
+  --ad-ok-text: #86efac;
+  --ad-warn-soft: #3a2a0b;
+  --ad-warn-text: #fcd34d;
+  --ad-neutral-soft: #232835;
+  --ad-neutral-text: #c9cfdb;
+  --ad-info-soft: #0e2a3a;
+  --ad-info-text: #7dd3fc;
+  --ad-focus: rgba(122, 149, 255, 0.4);
+  color-scheme: dark;
+}
+
+/* ---------- Bootstrap ligado aos tokens ---------- */
+:root,
+[data-bs-theme='light'],
+[data-bs-theme='dark'] {
+  --bs-body-font-family: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bs-font-monospace: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --bs-body-bg: var(--ad-bg);
+  --bs-body-color: var(--ad-text);
+  --bs-emphasis-color: var(--ad-text);
+  --bs-secondary-color: var(--ad-muted);
+  --bs-tertiary-bg: var(--ad-surface);
+  --bs-secondary-bg: var(--ad-bg);
+  --bs-border-color: var(--ad-border);
+  --bs-border-radius: 0.625rem;
+  --bs-border-radius-lg: 0.875rem;
+  --bs-link-color: var(--ad-primary-text);
+  --bs-link-hover-color: var(--ad-primary-hover);
+  --bs-link-color-rgb: 31, 79, 255;
+  --bs-primary: var(--ad-primary);
+  --bs-primary-rgb: 31, 79, 255;
+  --bs-focus-ring-color: var(--ad-focus);
+  --bs-heading-color: var(--ad-text);
+}
+
+[data-bs-theme='dark'] {
+  --bs-link-color-rgb: 143, 166, 255;
+  --bs-primary-rgb: 61, 99, 255;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+code,
+.font-monospace {
+  font-family: var(--bs-font-monospace);
+}
+
+.btn {
+  --bs-btn-font-weight: 700;
+  --bs-btn-padding-x: 1rem;
+  border-radius: 0.625rem;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--ad-primary);
+  --bs-btn-border-color: var(--ad-primary);
+  --bs-btn-hover-bg: var(--ad-primary-hover);
+  --bs-btn-hover-border-color: var(--ad-primary-hover);
+  --bs-btn-active-bg: var(--ad-primary-hover);
+  --bs-btn-active-border-color: var(--ad-primary-hover);
+  --bs-btn-disabled-bg: var(--ad-primary);
+  --bs-btn-disabled-border-color: var(--ad-primary);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--ad-primary);
+  --bs-btn-border-color: var(--ad-primary);
+  --bs-btn-hover-bg: var(--ad-primary-hover);
+  --bs-btn-hover-border-color: var(--ad-primary-hover);
+  --bs-btn-active-bg: var(--ad-primary-hover);
+  --bs-btn-active-border-color: var(--ad-primary-hover);
+  --bs-btn-disabled-bg: var(--ad-primary);
+  --bs-btn-disabled-border-color: var(--ad-primary);
+}
+
+.btn-outline-secondary,
+.btn-outline-primary {
+  --bs-btn-color: var(--ad-text);
+  --bs-btn-border-color: var(--ad-border);
+  --bs-btn-hover-color: var(--ad-text);
+  --bs-btn-hover-bg: var(--ad-bg);
+  --bs-btn-hover-border-color: var(--ad-muted);
+  --bs-btn-active-color: var(--ad-text);
+  --bs-btn-active-bg: var(--ad-bg);
+  --bs-btn-active-border-color: var(--ad-muted);
+}
+
+.form-control,
+.form-select {
+  background-color: var(--ad-surface);
+  border-color: var(--ad-border);
+  color: var(--ad-text);
+  border-radius: 0.625rem;
+
+  &:focus {
+    border-color: var(--ad-primary);
+    box-shadow: 0 0 0 0.2rem var(--ad-focus);
+    background-color: var(--ad-surface);
+    color: var(--ad-text);
+  }
+}
+
+.card,
+.list-group-item {
+  background-color: var(--ad-surface);
+  border-color: var(--ad-border);
+}
+
+.list-group-item-action:hover {
+  background-color: var(--ad-bg);
+}
+
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--ad-text);
+  --bs-table-border-color: var(--ad-border);
+}
+
+/* ---------- componentes do Ademiro ---------- */
+.ad-card {
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-border);
+  border-radius: 0.875rem;
+}
+
+.ad-section-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ad-muted);
+}
+
+.ad-status {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &[data-status='draft'] {
+    background: var(--ad-warn-soft);
+    color: var(--ad-warn-text);
+  }
+
+  &[data-status='published'] {
+    background: var(--ad-ok-soft);
+    color: var(--ad-ok-text);
+  }
+
+  &[data-status='archived'] {
+    background: var(--ad-neutral-soft);
+    color: var(--ad-neutral-text);
+  }
+}
+
+.ad-badge-info {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: var(--ad-info-soft);
+  color: var(--ad-info-text);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ad-chip {
+  display: inline-block;
+  padding: 0.3rem 0.625rem;
+  border-radius: 0.5rem;
+  background: var(--ad-primary-soft);
+  color: var(--ad-primary-text);
+  font-family: var(--bs-font-monospace);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.ad-icon-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.625rem;
+  border: 1px solid var(--ad-border);
+  background: var(--ad-surface);
+  color: var(--ad-text);
+
+  &:hover {
+    border-color: var(--ad-muted);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--ad-focus);
+    outline-offset: 1px;
+  }
+}
+
+.ad-slug {
+  font-family: var(--bs-font-monospace);
+  font-size: 0.8125rem;
+  color: var(--ad-muted);
+}
+
+.visually-hidden-focusable:focus {
+  background: var(--ad-surface);
+}
 
 .cover-preview {
   width: 100%;
@@ -6,8 +275,59 @@
   object-fit: cover;
 }
 
-/* Milkdown Crepe: área de edição com altura mínima confortável */
+/* ---------- editor Milkdown nos dois temas ---------- */
+app-markdown-editor .milkdown {
+  --crepe-color-background: var(--ad-surface);
+  --crepe-color-on-background: var(--ad-text);
+  --crepe-color-on-surface: var(--ad-body);
+  --crepe-font-default: 'Manrope Variable', system-ui, sans-serif;
+  --crepe-font-title: 'Manrope Variable', system-ui, sans-serif;
+  --crepe-font-code: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+[data-bs-theme='dark'] app-markdown-editor .milkdown {
+  --crepe-color-surface: #0b0d12;
+  --crepe-color-surface-low: #171b24;
+  --crepe-color-on-surface-variant: #a9b1c2;
+  --crepe-color-outline: #6b7385;
+  --crepe-color-primary: #c9cfdb;
+  --crepe-color-secondary: #2b3140;
+  --crepe-color-on-secondary: #e8ebf2;
+  --crepe-color-inverse: #e8ebf2;
+  --crepe-color-on-inverse: #12151c;
+  --crepe-color-inline-code: #ff8a8a;
+  --crepe-color-error: #ff8a8a;
+  --crepe-color-hover: #1d2230;
+  --crepe-color-selected: #2b3140;
+  --crepe-color-inline-area: #232835;
+  --crepe-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 3px 1px rgba(0, 0, 0, 0.35);
+  --crepe-shadow-2: 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 6px 2px rgba(0, 0, 0, 0.35);
+}
+
 app-markdown-editor .milkdown .ProseMirror {
   min-height: 20rem;
-  padding: 1.5rem 3rem;
+  padding: 1.5rem 2.25rem;
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+}
+
+.breadcrumb a {
+  color: var(--ad-primary-text);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (max-width: 576px) {
+  app-markdown-editor .milkdown .ProseMirror {
+    padding: 1rem 1.25rem;
+  }
 }

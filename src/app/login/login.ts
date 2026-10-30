@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { FirebaseError } from 'firebase/app';
 import { AuthService } from '../core/auth.service';
+import { Logo } from '../core/logo';
 
 const errorMessages: Record<string, string> = {
   'auth/invalid-credential': 'E-mail ou senha inválidos.',
@@ -13,8 +14,9 @@ const errorMessages: Record<string, string> = {
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Logo],
   templateUrl: './login.html',
+  styleUrl: './login.scss',
 })
 export class Login {
   private readonly authService = inject(AuthService);
