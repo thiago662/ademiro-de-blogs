@@ -20,6 +20,8 @@
 
 **Exemplos em uso:** os sites [Brain Logs](https://thiago662.github.io/brain-logs-app/) ([código](https://github.com/thiago662/brain-logs-app)) e [Blog de Notas](https://thiago662.github.io/blog-de-notas-app/) ([código](https://github.com/thiago662/blog-de-notas-app)) leem os posts publicados neste painel.
 
+**Modelo de site:** o [Blog Demo](https://thiago662.github.io/blog-demo-app/) ([código](https://github.com/thiago662/blog-demo-app)), feito em Next.js + Bootstrap, é um ponto de partida genérico para o site do seu blog.
+
 ## 🛠️ Tecnologias
 
 | Camada | Uso |
